@@ -1,21 +1,23 @@
 package com.Nataneljwd.demo.Models;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 public class Drawing {
 
     private point[] points;
 
-    Drawing(point[] points) {
+    public Drawing(point[] points) {
         this.points=points;
     }
 
 
-    public class point{
+    public static class point{
 
         private String color="";
         private int[] pos;
         private int radius;
 
-        point(String color, int[] pos, int radius){
+        public point(String color, int[] pos, int radius){
             this.color=color;
             this.pos=pos;
             this.radius=radius;
@@ -39,6 +41,29 @@ public class Drawing {
 
         public int getRadius() {
             return radius;
+        }
+
+		public void setRadius(int radius) {
+			this.radius = radius;
+		}
+
+    }
+
+
+	public point[] getPoints() {
+		return points;
+	}
+
+
+	public void setPoints(point[] points) {
+		this.points = points;
+	}
+    public String toString(){
+        ObjectMapper mapper=new ObjectMapper();
+        try{
+        return mapper.writeValueAsString(this.points);
+        }catch(Exception e){
+            return "failed";
         }
 
     }

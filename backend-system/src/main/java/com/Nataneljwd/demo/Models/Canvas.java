@@ -1,9 +1,5 @@
 package com.Nataneljwd.demo.Models;
 
-import java.util.List;
-
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -11,12 +7,27 @@ import lombok.Setter;
 @Getter
 @Setter
 
-@Document("canvas")
 public class Canvas {
 
-    @Id
-    private String id;
+    private Drawing[] drawings;
+    public Canvas(Drawing[] d){
+        this.drawings=d;
+    }
 
-    private List<Drawing> drawings;
+	public Drawing[] getDrawings() {
+		return this.drawings;
+	}
+
+	public void setDrawings(Drawing[] drawings) {
+        this.drawings=drawings;
+	}
+    public String toString(){
+        StringBuilder bldr=new StringBuilder();
+        for(Drawing d:this.drawings){
+            bldr.append(d.toString());
+            bldr.append("\n");
+        }
+        return bldr.toString();
+    }
     
 }

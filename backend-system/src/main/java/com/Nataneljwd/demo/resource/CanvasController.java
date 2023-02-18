@@ -1,10 +1,10 @@
 package com.Nataneljwd.demo.resource;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.Nataneljwd.demo.Models.Canvas;
+import com.Nataneljwd.demo.Models.Drawing;
+import com.Nataneljwd.demo.Models.Drawing.point;
 import com.Nataneljwd.demo.repositry.CanvasRepo;
 
 @RestController
@@ -32,6 +34,17 @@ public class CanvasController {
             return new ResponseEntity<>(null,HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
+    }
+    @GetMapping("/")
+    public String test(){
+        return "test";
+    }
+    @GetMapping("/test")
+    public ResponseEntity<Canvas> getCanvas(){
+        point p = new point("black",new int[]{200,100},5);
+        Canvas c= new Canvas(new Drawing[]{new Drawing(new point[]{p})});
+        return new ResponseEntity<Canvas>(c, HttpStatus.OK);
+        
     }
 
     @GetMapping("/getCanvas/{id}")
