@@ -9,6 +9,7 @@ public class Drawing {
     public Drawing(point[] points) {
         this.points=points;
     }
+    public Drawing(){}
 
 
     public static class point{
@@ -63,6 +64,7 @@ public class Drawing {
         try{
         return mapper.writeValueAsString(this.points);
         }catch(Exception e){
+            System.out.println("errorrrrrr");
             return "failed";
         }
 

@@ -24,11 +24,13 @@ public class CanvasController {
 
     @Autowired
     private CanvasRepo repo;
+    private Canvas canvas;
 
     @PostMapping("/saveCanvas")
     public ResponseEntity<Canvas> saveCanvas(@RequestBody Canvas canvas){
+        this.canvas=canvas;
         try{
-            repo.save(canvas);
+            // repo.save(canvas);
             return new ResponseEntity<Canvas>(canvas,HttpStatus.CREATED);
         }catch(Exception e){
             return new ResponseEntity<>(null,HttpStatus.INTERNAL_SERVER_ERROR);
@@ -36,8 +38,8 @@ public class CanvasController {
 
     }
     @GetMapping("/")
-    public String test(){
-        return "test";
+    public ResponseEntity<Canvas> test(){
+        return new ResponseEntity<Canvas>(canvas,HttpStatus.OK);
     }
     @GetMapping("/test")
     public ResponseEntity<Canvas> getCanvas(){
