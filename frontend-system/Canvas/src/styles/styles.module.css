@@ -1,0 +1,18 @@
+.canvas{
+    width:100%;
+    height:100%;
+    background-color:#000000;
+    flex:13;
+    display:grid;
+}
+.navbar{
+    width:100%;
+    height:100%;
+    flex:1;
+    background-color: rgb(50, 50, 50);
+}
+.pixel{
+    width:100%;
+    height:100%;
+    pointer-events:none;
+}
