@@ -1,6 +1,7 @@
 import './App.css'
 
 import Canvas from './components/Canvas'
+import CanvasOptions from './components/CanvasOptions';
 import Navbar from './components/Navbar'
 
 function App() {
@@ -9,6 +10,7 @@ function App() {
     <div className="App">
         <Navbar />
         <Canvas rows={rows} cols={cols} /> 
+        <CanvasOptions />
     </div>
   )
 }
