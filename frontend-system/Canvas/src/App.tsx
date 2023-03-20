@@ -1,16 +1,20 @@
 import './App.css'
 
-import Canvas from './components/Canvas'
-import CanvasOptions from './components/CanvasOptions';
 import Navbar from './components/Navbar'
+import { BrowserRouter, Routes, Route} from "react-router-dom";
+import DrawingPage from './pages/DrawingPage';
+import Home from './pages/Home';
 
 function App() {
-    let rows=40,cols=50;
   return (
     <div className="App">
         <Navbar />
-        <Canvas rows={rows} cols={cols} /> 
-        <CanvasOptions />
+        <BrowserRouter> 
+            <Routes>
+              <Route path = "/canvas" element = {<DrawingPage />} />
+              <Route path = "/" element = {<Home />} />
+            </Routes>
+        </BrowserRouter>
     </div>
   )
 }
