@@ -4,24 +4,24 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class Drawing {
 
-    private point[] points;
+    private Pixel[] points;
 
-    public Drawing(point[] points) {
+    public Drawing(Pixel[] points) {
         this.points=points;
     }
     public Drawing(){}
 
 
-    public static class point{
+    public static class Pixel{
 
         private String color="";
         private int[] pos;
-        private int radius;
 
-        public point(String color, int[] pos, int radius){
-            this.color=color;
+        public Pixel(){}
+
+        public Pixel(String color, int[] pos){
+            this.color = color;
             this.pos=pos;
-            this.radius=radius;
         }
 
         public String getColor() {
@@ -40,23 +40,16 @@ public class Drawing {
             this.pos = pos;
         }
 
-        public int getRadius() {
-            return radius;
-        }
-
-		public void setRadius(int radius) {
-			this.radius = radius;
-		}
 
     }
 
 
-	public point[] getPoints() {
+	public Pixel[] getPoints() {
 		return points;
 	}
 
 
-	public void setPoints(point[] points) {
+	public void setPoints(Pixel[] points) {
 		this.points = points;
 	}
     public String toString(){

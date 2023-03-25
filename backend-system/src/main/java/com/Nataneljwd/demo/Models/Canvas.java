@@ -1,6 +1,7 @@
 package com.Nataneljwd.demo.Models;
 
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.annotation.Id;
@@ -9,7 +10,24 @@ import org.springframework.data.annotation.Id;
 public class Canvas {
     @Id
     private String id;
-	private Drawing[] drawings;
+	private List<Drawing> drawings;
+
+
+    public Canvas(){}
+
+    public Canvas(List<Drawing> d){
+        this.drawings=d;
+        this.id=UUID.randomUUID().toString();
+    }
+
+	public List<Drawing> getDrawings() {
+		return this.drawings;
+	}
+
+	public void setDrawings(List<Drawing> drawings) {
+        this.drawings=drawings;
+	}
+
     public String getId() {
 		return id;
 	}
@@ -17,19 +35,7 @@ public class Canvas {
 	public void setId(String id) {
 		this.id = id;
 	}
-    public Canvas(){}
-    public Canvas(Drawing[] d){
-        this.drawings=d;
-        this.id=UUID.randomUUID().toString();
-    }
 
-	public Drawing[] getDrawings() {
-		return this.drawings;
-	}
-
-	public void setDrawings(Drawing[] drawings) {
-        this.drawings=drawings;
-	}
     public String toString(){
         StringBuilder bldr=new StringBuilder();
         bldr.append("id:"+id+"\n");
