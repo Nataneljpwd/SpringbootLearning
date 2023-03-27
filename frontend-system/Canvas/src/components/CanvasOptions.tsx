@@ -15,8 +15,28 @@ export default function CanvasOptions(){
     const changeColor = (color:string) =>{
         dispatch({type:"CHANGE_COLOR",color:color});
     }
+    const getInverseColor = (color:string) =>{
+        if(color[0] == "#")color = color.slice(1);
+        if(color.length === 3){
+            color = color[0] + color[0] + color[1] + color[1] + color[2] + color[2];
+        }
+        let r:number = 255 - parseInt(color.slice(0, 2), 16),
+        g:number = 255 - parseInt(color.slice(2, 4), 16),
+        b:number = 255 - parseInt(color.slice(4, 6), 16);
+        
+        color ="#" + padZero(r.toString(16),r.toString(16).length) + padZero(g.toString(16), g.toString(16).length) + padZero(b.toString(16), b.toString(16).length);
+        console.log(color);
+        
+        return color;
+    }
+
+    function padZero(str:string, len:number) {
+        len = len || 2;
+        var zeros = new Array(len).join('0');
+        return (zeros + str).slice(-len);
+    }
     return (
-        <div className={styles.canvas_options}>
+        <div style = {{background:"linear-gradient(50deg, "+ state.color +", "+ getInverseColor(state.color) +")", boxShadow:"0px 0px 10px "+ getInverseColor(state.color) }} className={styles.canvas_options} >
             <div style={{width:"100%", display:"flex", justifyContent:"space-around", height:"6vh"}}>
                 <IconButton selected = {state.mode == "brush"} icon = {faPaintbrush} onClick={()=>dispatch({type:"CHANGE_MODE", mode:"brush"})} />
                 <IconButton selected = {state.mode == "fill"} icon = {faFillDrip} onClick={()=>dispatch({type:"CHANGE_MODE", mode:"fill"})} />

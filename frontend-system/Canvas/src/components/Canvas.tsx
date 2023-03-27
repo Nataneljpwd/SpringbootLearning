@@ -16,8 +16,18 @@ function Canvas(props:canvasProps){
     const handleMouseDown = useCallback((e:any)=>{
         if(!e.target)return;
         let rect = e.target.getBoundingClientRect();
-        dispatch({type:"mouseDown"});
-        updatePixel(Math.floor((e.pageY-rect.top)/(rect.height/props.rows)),Math.floor((e.clientX-rect.left)/(window.innerWidth/props.cols)));
+        let r = Math.floor((e.pageY-rect.top)/(rect.height/props.rows));//
+        let c = Math.floor((e.clientX-rect.left)/(window.innerWidth/props.cols));
+
+        if(state.mode == "brush"){
+            dispatch({type:"mouseDown"});
+            // updatePixel(Math.floor((e.pageY-rect.top)/(rect.height/props.rows)),Math.floor((e.clientX-rect.left)/(window.innerWidth/props.cols)));
+            updatePixel(r,c);
+        }else if(state.mode == "fill"){
+            dispatch({type:"fill", pos:[r,c]})
+        }else if(state.mode == "eraser"){
+            //Todo: handle this
+        }
     },[state]);
 
 
@@ -31,7 +41,6 @@ function Canvas(props:canvasProps){
     const updatePixel = (row:number,col:number)=>{
         dispatch({type:"updatePixel",pos:[row,col]});
     }
-
 
     return (
         <div ref={ref} onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseUp={()=>{dispatch({type:"mouseUp"})}}
