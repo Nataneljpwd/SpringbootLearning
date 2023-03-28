@@ -22,7 +22,8 @@ export type state = {
     drawings:{pos:number[],color:string}[][],
     mouseDown:boolean,
     color:string,
-    mode:string
+    mode:string,
+    redoArray:{pos:number[],color:string}[][],
 }
 
 

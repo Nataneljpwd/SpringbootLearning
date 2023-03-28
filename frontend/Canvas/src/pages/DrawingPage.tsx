@@ -6,12 +6,13 @@ import { action, state } from "../types";
 
 
 
-const initState={
+const initState:state={
     pixels:[["#000000"]],
     drawings:[[]],
     mouseDown:false,
     color:"#FFFFFF",
-    mode:"brush"
+    mode:"brush",
+    redoArray:[],
 };
 
 function updateCanvas(state:state){
@@ -40,11 +41,18 @@ function reducer(state:state,action:action):any{
 
         case "undo":
             let pixToRemove = state.drawings.pop();
+            if(state.drawings.length === 0)state.drawings.push([]);
             if(!pixToRemove)return {...state};
-            for(let pixel of pixToRemove){
-                let [r,c] =pixel.pos;
-                state.pixels[r][c]="#000000";
+            state.redoArray.push(pixToRemove);
+            if(state.redoArray.length > 10){
+                state.redoArray.shift();
             }
+            return updateCanvas(state);
+
+        case "redo":
+            if(state.redoArray.length == 0)return {...state};
+            let drawing = state.redoArray.pop();
+            if(drawing)state.drawings.push(drawing);
             return updateCanvas(state);
 
         case "updatePixel":
@@ -78,7 +86,7 @@ function reducer(state:state,action:action):any{
                 for(let i=0;i<dirs.length;i++){
                     let row = currRow + dirs[i][0];
                     let col = currCol + dirs[i][1];
-                    if(state.pixels[row][col] != state.color && (!set.has(row+","+col) && row>=0 && col>= 0 && row < state.pixels.length && col < state.pixels[0].length)){
+                    if((!set.has(row+","+col) && row>=0 && col>= 0 && row < state.pixels.length && col < state.pixels[0].length) && state.pixels[row][col] != state.color){
                         set.add(row+","+col);
                         state.pixels[row][col] = state.color;
                         state.drawings[state.drawings.length-1].push({pos:[row,col], color:state.color});
