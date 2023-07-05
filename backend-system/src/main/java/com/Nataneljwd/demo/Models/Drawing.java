@@ -1,66 +1,43 @@
 package com.Nataneljwd.demo.Models;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@AllArgsConstructor
+@NoArgsConstructor
 public class Drawing {
 
-    private Pixel[] points;
+    @Getter
+    @Setter
+    private Pixel[] pixels;
 
-    public Drawing(Pixel[] points) {
-        this.points=points;
-    }
-    public Drawing(){}
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Pixel {
 
-
-    public static class Pixel{
-
-        private String color="";
+        @Getter
+        @Setter
+        private String color = "";
+        @Getter
+        @Setter
         private int[] pos;
 
-        public Pixel(){}
-
-        public Pixel(String color, int[] pos){
-            this.color = color;
-            this.pos=pos;
+        public String toString() {
+            return String.format("{pos: [%d, %d], color: %s}", pos[0], pos[1], color);
         }
-
-        public String getColor() {
-            return color;
-        }
-
-        public void setColor(String color) {
-            this.color = color;
-        }
-
-        public int[] getPos() {
-            return pos;
-        }
-
-        public void setPos(int[] pos) {
-            this.pos = pos;
-        }
-
-
     }
 
+    public String toString() {
+        StringBuilder bldr = new StringBuilder();
 
-	public Pixel[] getPoints() {
-		return points;
-	}
-
-
-	public void setPoints(Pixel[] points) {
-		this.points = points;
-	}
-    public String toString(){
-        ObjectMapper mapper=new ObjectMapper();
-        try{
-        return mapper.writeValueAsString(this.points);
-        }catch(Exception e){
-            System.out.println("errorrrrrr");
-            return "failed";
+        bldr.append("[");
+        for (Pixel p : pixels) {
+            bldr.append(p.toString());
+            bldr.append(", ");
         }
-
+        bldr.append("]");
+        return bldr.substring(0, bldr.length() - 2);
     }
-    
 }
