@@ -1,7 +1,7 @@
-import { useReducer } from "react";
+import { useContext, useReducer } from "react";
 import Canvas from "../components/Canvas";
 import CanvasOptions from "../components/CanvasOptions";
-import { StateContext, DispatchContext } from "../contexts/ReducerContext";
+import { StateContext, DispatchContext, CanvasSizeContext } from "../contexts/ReducerContext";
 import { action, state } from "../types";
 
 
@@ -114,6 +114,24 @@ function reducer(state: state, action: action): any {
 
         case "mouseUp":
             return { ...state, mouseDown: false };
+        case "construct":
+            state.pixels = [];
+            if (!action.dimensions) return { ...state };
+            for (let i = 0; i < action.dimensions[0]; i++) {
+                state.pixels.push([]);
+                for (let j = 0; j < action.dimensions[1]; j++) {
+                    state.pixels[i].push([]);
+                    state.pixels[i][j] = "#000000";
+                }
+            }
+            if (action.drawings) {
+                for (let i = 0; i < action.drawings.length; i++) {
+                    for (let j = 0; j < action.drawings[i].length; j++) {
+                        state.pixels[action.drawings[i][j].pos[0]][action.drawings[i][j].pos[1]] = action.drawings[i][j].color;
+                    }
+                }
+            }
+            return { ...state };
         default:
             break;
     }
@@ -121,12 +139,12 @@ function reducer(state: state, action: action): any {
 
 export default function DrawingPage() {
 
-
     const [state, dispatch] = useReducer<state, () => state>(reducer, initState);
+    const canvasSize = useContext<any>(CanvasSizeContext);
     return (
         <StateContext.Provider value={state}>
             <DispatchContext.Provider value={dispatch}>
-                <Canvas rows={40} cols={50} />
+                <Canvas rows={canvasSize.rows} cols={canvasSize.cols} />
                 <CanvasOptions />
             </DispatchContext.Provider>
         </StateContext.Provider>
