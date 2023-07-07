@@ -1,5 +1,5 @@
 import styles from '../styles/styles.module.css';
-import { useCallback, useEffect, useRef, useContext } from 'react'
+import { useCallback, useEffect, useRef, useContext, useState } from 'react'
 import Pixel from './Pixel'
 import { DispatchContext, StateContext } from '../contexts/ReducerContext';
 import { canvasProps } from '../types';
@@ -11,9 +11,6 @@ function Canvas(props: canvasProps) {
     const ref = useRef(null);
     useEffect(() => {
         const drawings = props.drawings;
-        if (drawings) {
-
-        }
         dispatch({ type: "init", dimensions: [props.rows, props.cols] });
     }, []);
 

@@ -37,6 +37,7 @@ export type DrawingPreviewProps = {
 
 export type GlobalState = {
     page: number,
+    canvasSize: { rows: number, cols: number },
 }
 export type GlobalDispatch = {
     dispatch: Dispatch<any>,
