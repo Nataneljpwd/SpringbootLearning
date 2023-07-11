@@ -1,5 +1,9 @@
 package com.Nataneljwd.demo.Models;
 
+import java.util.List;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,11 +11,12 @@ import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonDeserialize(using = com.Nataneljwd.demo.deserializers.DrawingDeserializer.class)
 public class Drawing {
 
     @Getter
     @Setter
-    private Pixel[] pixels;
+    private List<Pixel> pixels;
 
     @NoArgsConstructor
     @AllArgsConstructor

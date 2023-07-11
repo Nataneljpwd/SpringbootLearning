@@ -32,7 +32,7 @@ export type state = {
 
 export type DrawingPreviewProps = {
     id: String,
-    drawings: { pos: number[], color: string }[][],
+    // drawings: { pos: number[], color: string }[][],
 }
 
 export type GlobalState = {

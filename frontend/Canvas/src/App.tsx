@@ -35,7 +35,6 @@ function App() {
                 return { ...state, page: state.page + 1 };
             default:
                 return state;
-
         }
     }
 }
