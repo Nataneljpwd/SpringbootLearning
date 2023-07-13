@@ -45,7 +45,8 @@ public class AuthenticationService {
 
     }
 
-    public String refresh(String email) {
+    public String refresh(String oldJwt) {
+        String email = jwtService.extractUsername(oldJwt);
         UserDetails user = userRepositry.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Email Not Found"));
         String jwt = jwtService.generateRefreshToken(user);

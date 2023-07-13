@@ -38,13 +38,13 @@ const onResponseError = async (error: AxiosError): Promise<AxiosError> => {
 
             try {
                 const rs = await axios.post(`${API_URL}/auth/refresh`, {
-                    refresh_token: storedToken.refresh_token,
+                    oldToken: storedToken.refresh_token,
                 });
 
-                const { token, user } = rs.data;
+                const { token } = rs.data;
 
                 localStorage.setItem("token", JSON.stringify(token));
-                localStorage.setItem("user", JSON.stringify(user));
+                // localStorage.setItem("user", JSON.stringify(user));
 
                 return;
             } catch (_error) {

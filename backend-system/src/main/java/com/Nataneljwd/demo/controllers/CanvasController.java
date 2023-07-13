@@ -60,18 +60,29 @@ public class CanvasController {
         return new ResponseEntity<List<String>>(canvases, HttpStatus.OK);
     }
 
-    // @GetMapping("/owner")
-    // public ResponseEntity<List<String>>
-    // getCanvasesByOwnerId(@RequestParam(required = true) String id,
-    // @RequestParam(defaultValue = "0") int pageNum) {
-    // Pageable pageable = PageRequest.of(pageNum, 15);
-    // List<String> canvases = canvasService.getCanvasesByOwnerId(id, pageable);
-    // return new ResponseEntity<List<String>>(canvases, HttpStatus.OK);
-    // }
+    @GetMapping("/owner/all")
+    public ResponseEntity<List<String>> getAllCanvasesByOwnerNameOrId(@RequestParam(required = false) String ownerId,
+            @RequestParam(required = false) String ownerName) {
+        List<String> canvases;
+        if (ownerId != null) {
+            canvases = canvasService.getAllCanvasesByOwnerId(ownerId);
+        } else if (ownerName != null) {
+            canvases = canvasService.getAllCanvasesByownerName(ownerName);
+        } else {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<List<String>>(canvases, HttpStatus.OK);
+
+    }
 
     @PostMapping
     public ResponseEntity<String> saveCanvas(@RequestBody Canvas canvas) {
         return new ResponseEntity(canvasService.saveCanvas(canvas), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/update")
+    public ResponseEntity<String> updateCanvas(@RequestBody Canvas canvas) {
+        return new ResponseEntity(canvasService.updateCanvasById(canvas.getId(), canvas), HttpStatus.OK);
     }
 
 }

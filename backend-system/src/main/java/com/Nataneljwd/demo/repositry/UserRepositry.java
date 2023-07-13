@@ -20,4 +20,10 @@ public interface UserRepositry extends MongoRepository<User, String> {
 
     @Query(value = "{'_id': ?0}", fields = "{'canvases': 0}")
     Optional<List<String>> getCanvasesByUserId(String id, Pageable pageable);
+
+    @Query(value = "{'_id': ?0}", fields = "{'canvases': 0}")
+    Optional<List<String>> getCanvasesByUserId(String id);
+
+    @Query(value = "{'username': ?0}", fields = "{'canvases': 0}")
+    Optional<List<String>> getCanvasesByUsername(String name);
 }

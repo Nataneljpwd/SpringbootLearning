@@ -6,12 +6,15 @@ import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import com.Nataneljwd.demo.Exceptions.NotFoundException;
 import com.Nataneljwd.demo.Models.Canvas;
 import com.Nataneljwd.demo.repositry.CanvasRepositry;
 import com.Nataneljwd.demo.repositry.UserRepositry;
+import com.Nataneljwd.demo.security.User;
 
 @Service
 public class CanvasService {
@@ -34,7 +37,11 @@ public class CanvasService {
         return c.getId();
     }
     public String saveCanvas(Canvas canvas) {
-        return canvasRepository.save(canvas).getId();
+        String st = canvasRepository.save(canvas).getId();
+        User user = userRepositry.findById(canvas.getOwnerId()).orElseThrow(() -> new NotFoundException("Owner does not exist"));
+        user.getCanvases().add(canvas.getId());
+        userRepositry.save(user);
+        return st;
     }
     public String deleteCanvasById(String id) {
         if(canvasRepository.existsById(id)) {
@@ -56,9 +63,17 @@ public class CanvasService {
         List<String> lst = canvasRepository.findAll(pageable).getContent().stream().map( canvas -> canvas.getId()).collect(Collectors.toList());
         return lst;
     }
+    public List<String> getAllCanvasesByOwnerId(String id) {
+        List<String> lst = userRepositry.getCanvasesByUserId(id).orElseThrow(() -> new NotFoundException("Owner does not exist or has no canvases"));
+        return lst;
+    }
 
 	public List<String> getCanvasesByOwnerId(String id, Pageable pageable) {
         List<String> lst = userRepositry.getCanvasesByUserId(id, pageable).orElseThrow(() -> new NotFoundException("Owner does not exist or has no canvases"));
         return lst;
 	}
+    public List<String> getAllCanvasesByownerName(String owner) {
+        List<String> lst = userRepositry.getCanvasesByUsername(owner).orElseThrow(() -> new NotFoundException("Owner does not exist or has no canvases"));
+        return lst;
+    }
 }

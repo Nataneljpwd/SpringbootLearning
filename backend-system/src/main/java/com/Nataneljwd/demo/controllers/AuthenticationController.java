@@ -2,6 +2,7 @@ package com.Nataneljwd.demo.controllers;
 
 import com.Nataneljwd.demo.security.AuthenticationRequest;
 import com.Nataneljwd.demo.security.AuthenticationResponse;
+import com.Nataneljwd.demo.security.JwtRefreshRequest;
 import com.Nataneljwd.demo.security.RegisterRequest;
 import com.Nataneljwd.demo.services.AuthenticationService;
 import lombok.RequiredArgsConstructor;
@@ -29,8 +30,8 @@ public class AuthenticationController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<AuthenticationResponse> refresh(@RequestBody AuthenticationRequest req) {
-        return ResponseEntity.ok(new AuthenticationResponse(authenticationService.refresh(req.getEmail())));
+    public ResponseEntity<AuthenticationResponse> refresh(@RequestBody JwtRefreshRequest req) {
+        return ResponseEntity.ok(new AuthenticationResponse(authenticationService.refresh(req.getOldToken())));
     }
 
 }

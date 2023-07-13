@@ -26,16 +26,11 @@ public class Canvas {
 
     @Getter
     @Setter
-    private String owner;
-
-    @Getter
-    @Setter
-    private Integer ownerId;
+    private String ownerId;
 
     public String toString() {
         StringBuilder bldr = new StringBuilder();
         bldr.append("id:" + id + "\n");
-        bldr.append("owner:" + owner + "\n");
         bldr.append("ownerId:" + ownerId + "\n");
         bldr.append("drawings:[\n");
         for (int i = 0; i < drawings.size(); i++) {
