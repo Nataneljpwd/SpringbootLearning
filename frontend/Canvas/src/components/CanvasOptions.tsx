@@ -6,6 +6,7 @@ import { DispatchContext, StateContext } from "../contexts/ReducerContext";
 import { state } from "../types";
 import { HexColorPicker } from "react-colorful";
 import axios from "axios";
+import api from "../api/api";
 
 
 export default function CanvasOptions() {
@@ -50,9 +51,9 @@ export default function CanvasOptions() {
     }
 
     function saveCanvas(state: state) {
-        axios.post("/canvas", {
+        api.post("/canvas", {
             drawings: state.drawings,
-            owner: "test",
+            owner: "test",//TODO: implement auth in frontend and implement 
             ownerId: 123123
         })
     }
