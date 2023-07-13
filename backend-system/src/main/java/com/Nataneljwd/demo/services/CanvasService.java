@@ -11,14 +11,17 @@ import org.springframework.data.domain.Pageable;
 import com.Nataneljwd.demo.Exceptions.NotFoundException;
 import com.Nataneljwd.demo.Models.Canvas;
 import com.Nataneljwd.demo.repositry.CanvasRepositry;
+import com.Nataneljwd.demo.repositry.UserRepositry;
 
 @Service
 public class CanvasService {
 
     private final CanvasRepositry canvasRepository;
+    private final UserRepositry userRepositry;
 
-    public CanvasService(CanvasRepositry canvasRepository) {
+    public CanvasService(CanvasRepositry canvasRepository, UserRepositry userRepositry) {
         this.canvasRepository = canvasRepository;
+        this.userRepositry = userRepositry;
     }
 
     /** 
@@ -46,14 +49,16 @@ public class CanvasService {
         return c;
     }
     public List<String> getCanvasesByOwner(String owner, Pageable pageable) {
-        List<String> lst = canvasRepository.getCanvasesByOwner(owner, pageable).getContent();
-        if(lst.size() == 0) {
-            throw new NotFoundException("Owner does not exist or has no canvases");
-        }
+        List<String> lst = userRepositry.getCanvasesByUsername(owner, pageable).orElseThrow(() -> new NotFoundException("Owner does not exist or has no canvases"));
         return lst;
     }
     public List<String> getCanvases(Pageable pageable) {
         List<String> lst = canvasRepository.findAll(pageable).getContent().stream().map( canvas -> canvas.getId()).collect(Collectors.toList());
         return lst;
     }
+
+	public List<String> getCanvasesByOwnerId(String id, Pageable pageable) {
+        List<String> lst = userRepositry.getCanvasesByUserId(id, pageable).orElseThrow(() -> new NotFoundException("Owner does not exist or has no canvases"));
+        return lst;
+	}
 }

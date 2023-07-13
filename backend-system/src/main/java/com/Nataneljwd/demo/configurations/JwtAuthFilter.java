@@ -2,6 +2,7 @@ package com.Nataneljwd.demo.configurations;
 
 import java.io.IOException;
 
+import com.Nataneljwd.demo.services.JwtService;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,6 +25,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserDetailsService userDetailService;
+
     @Override
     protected void doFilterInternal(
             @NonNull HttpServletRequest request,
@@ -33,7 +35,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         final String authorizationHeader = request.getHeader("Authorization");
         final String jwt;
         final String userEmail;
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }

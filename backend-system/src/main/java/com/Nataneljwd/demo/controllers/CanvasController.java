@@ -2,9 +2,11 @@ package com.Nataneljwd.demo.controllers;
 
 import java.util.List;
 
+import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties.Authentication;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.Nataneljwd.demo.Models.Canvas;
+import com.Nataneljwd.demo.services.AuthenticationService;
 import com.Nataneljwd.demo.services.CanvasService;
 
 @RestController
@@ -40,13 +43,31 @@ public class CanvasController {
         return new ResponseEntity(canvasService.getCanvasById(id), HttpStatus.OK);
     }
 
-    @GetMapping("/owner/{owner}")
-    public ResponseEntity<List<String>> getCanvasesByOwnerName(@PathVariable String owner,
+    @GetMapping("/owner")
+    public ResponseEntity<List<String>> getCanvasesByOwnerNameOrId(@RequestParam(required = false) String owner,
+            @RequestParam(required = false) String id,
             @RequestParam(defaultValue = "0") int pageNum) {
+
         Pageable pageable = PageRequest.of(pageNum, 15);
-        List<String> canvases = canvasService.getCanvasesByOwner(owner, pageable);
+        List<String> canvases;
+        if (owner != null) {
+            canvases = canvasService.getCanvasesByOwner(owner, pageable);
+        } else if (id != null) {
+            canvases = canvasService.getCanvasesByOwnerId(id, pageable);
+        } else {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
         return new ResponseEntity<List<String>>(canvases, HttpStatus.OK);
     }
+
+    // @GetMapping("/owner")
+    // public ResponseEntity<List<String>>
+    // getCanvasesByOwnerId(@RequestParam(required = true) String id,
+    // @RequestParam(defaultValue = "0") int pageNum) {
+    // Pageable pageable = PageRequest.of(pageNum, 15);
+    // List<String> canvases = canvasService.getCanvasesByOwnerId(id, pageable);
+    // return new ResponseEntity<List<String>>(canvases, HttpStatus.OK);
+    // }
 
     @PostMapping
     public ResponseEntity<String> saveCanvas(@RequestBody Canvas canvas) {

@@ -32,46 +32,48 @@ public class User implements UserDetails {
 
     private Role role;
 
-	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		// TODO Auto-generated method stub
+    private List<String> canvases;// contains the list of canvas ids of the person
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        // TODO Auto-generated method stub
         return List.of(new SimpleGrantedAuthority(role.name()));
-	}
+    }
 
-	@Override
-	public String getPassword() {
-		// TODO Auto-generated method stub
+    @Override
+    public String getPassword() {
+        // TODO Auto-generated method stub
         return pass;
-	}
+    }
 
-	@Override
-	public String getUsername() {
-		// TODO Auto-generated method stub
+    @Override
+    public String getUsername() {
+        // TODO Auto-generated method stub
         return email;
-	}
+    }
 
-	@Override
-	public boolean isAccountNonExpired() {
-		// TODO Auto-generated method stub
+    @Override
+    public boolean isAccountNonExpired() {
+        // TODO Auto-generated method stub
         return true;
-	}
+    }
 
-	@Override
-	public boolean isAccountNonLocked() {
-		// TODO Auto-generated method stub
+    @Override
+    public boolean isAccountNonLocked() {
+        // TODO Auto-generated method stub
         return true;
-	}
+    }
 
-	@Override
-	public boolean isCredentialsNonExpired() {
-		// TODO Auto-generated method stub
+    @Override
+    public boolean isCredentialsNonExpired() {
+        // TODO Auto-generated method stub
         return true;
-	}
+    }
 
-	@Override
-	public boolean isEnabled() {
-		// TODO Auto-generated method stub
+    @Override
+    public boolean isEnabled() {
+        // TODO Auto-generated method stub
         return true;
-	}
+    }
 
 }
