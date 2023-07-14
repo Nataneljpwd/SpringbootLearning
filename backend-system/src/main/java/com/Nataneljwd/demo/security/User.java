@@ -33,10 +33,9 @@ public class User implements UserDetails {
     @Size(min = 3, max = 32, message = "Username must be between 3 and 32 characters")
     private String username;
 
-    @NotNull
     @Size(min = 8, max = 48, message = "Password must be between 8 and 48 characters")
     @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$", message = "Password must contain at least one letter and one number")
-    private String pass;
+    private String password;
 
     @Email(message = "Email must be valid")
     private String email;
@@ -54,7 +53,7 @@ public class User implements UserDetails {
     @Override
     public String getPassword() {
         // TODO Auto-generated method stub
-        return pass;
+        return password;
     }
 
     @Override

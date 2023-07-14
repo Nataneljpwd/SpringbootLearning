@@ -5,6 +5,7 @@ import com.Nataneljwd.demo.security.*;
 import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -23,14 +24,19 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public AuthenticationResponse register(RegisterRequest req) {
-        User user = User.builder()
-                .email(req.getEmail())
-                .pass(passwordEncoder.encode(req.getPassword()))
-                .role(Role.USER)
-                .canvases(new ArrayList<String>())
-                .username(req.getUsername()).build();
+    public AuthenticationResponse register(User user) {
+        user.setCanvases(new ArrayList<String>());
+        user.setRole(Role.USER);
+        Optional<User> check = userRepositry.findByEmail(user.getEmail());
 
+        if (check.isPresent()) {
+            throw new BadCredentialsException("Email aleady in use");
+        }
+        check = userRepositry.findByUsername(user.getUsername());
+        if (check.isPresent()) {
+            throw new BadCredentialsException("Username aleady in use");
+        }
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepositry.save(user);
         String jwt = jwtService.generateToken(user, 1000 * 60 * 60L);
         return AuthenticationResponse.builder().token(jwt).build();

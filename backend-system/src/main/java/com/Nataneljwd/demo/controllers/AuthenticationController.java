@@ -4,7 +4,10 @@ import com.Nataneljwd.demo.security.AuthenticationRequest;
 import com.Nataneljwd.demo.security.AuthenticationResponse;
 import com.Nataneljwd.demo.security.JwtRefreshRequest;
 import com.Nataneljwd.demo.security.RegisterRequest;
+import com.Nataneljwd.demo.security.User;
 import com.Nataneljwd.demo.services.AuthenticationService;
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -21,8 +24,8 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest req) {
-        return ResponseEntity.ok(authenticationService.register(req));
+    public ResponseEntity<AuthenticationResponse> register(@Valid @RequestBody User user) {
+        return ResponseEntity.ok(authenticationService.register(user));
     }
 
     @PostMapping("/authenticate")
