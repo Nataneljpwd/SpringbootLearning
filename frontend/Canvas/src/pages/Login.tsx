@@ -1,9 +1,10 @@
-
+import LoginForm from "../components/LoginForm";
+import styles from "../styles/styles.module.css";
 
 function Login() {
     return (
-        <div>
-            <h1>Login</h1>
+        <div className={styles.login}>
+            <LoginForm />
         </div>
     )
 }

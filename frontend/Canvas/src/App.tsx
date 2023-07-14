@@ -7,6 +7,13 @@ import Home from './pages/Home';
 import { CanvasSizeContext, GlobalDispatchContext, GlobalStateContext } from './contexts/ReducerContext';
 import { useReducer } from 'react';
 import { GlobalState, GlobalAction } from './types';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import axios from 'axios';
+
+
+axios.defaults.baseURL = 'http://localhost:8080/api/v1';
+axios.defaults.headers.post['Content-Type'] = 'application/json';
 
 const initState: GlobalState = {
     page: 0,
@@ -23,6 +30,8 @@ function App() {
                         <Routes>
                             <Route path="/canvas" element={<DrawingPage />} />
                             <Route path="/" element={<Home />} />
+                            <Route path="/login" element={<Login />} />
+                            <Route path="/register" element={<Register />} />
                         </Routes>
                     </BrowserRouter>
                 </GlobalDispatchContext.Provider>

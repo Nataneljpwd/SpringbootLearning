@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.ArrayList;
 
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -29,6 +30,7 @@ public class AuthenticationService {
                 .role(Role.USER)
                 .canvases(new ArrayList<String>())
                 .username(req.getUsername()).build();
+
         userRepositry.save(user);
         String jwt = jwtService.generateToken(user, 1000 * 60 * 60L);
         return AuthenticationResponse.builder().token(jwt).build();

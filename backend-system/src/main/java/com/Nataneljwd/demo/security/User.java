@@ -9,6 +9,11 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,10 +29,16 @@ public class User implements UserDetails {
     @Id
     private String id;
 
+    @NotNull
+    @Size(min = 3, max = 32, message = "Username must be between 3 and 32 characters")
     private String username;
 
+    @NotNull
+    @Size(min = 8, max = 48, message = "Password must be between 8 and 48 characters")
+    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$", message = "Password must contain at least one letter and one number")
     private String pass;
 
+    @Email(message = "Email must be valid")
     private String email;
 
     private Role role;

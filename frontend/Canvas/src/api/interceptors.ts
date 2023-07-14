@@ -8,12 +8,17 @@ import axios, {
 const API_URL = "http://localhost:8080/api/v1";
 
 const onRequest = (config: AxiosRequestConfig): AxiosRequestConfig => {
-    const token = JSON.parse(localStorage.getItem("token"));
     if (!config.headers) {
         config.headers = {};
     }
-    config.headers["Authorization"] = `Bearer ${token.access_token}`;
-    config.headers["Content-Type"] = "application/json";
+    const token = localStorage.getItem("token");
+    if (token) {
+        console.log(token);
+
+        config.headers["Authorization"] = `Bearer ${token}`;
+    } else {
+        config.headers["Authorization"] = "";
+    }
     config.baseURL = API_URL;
 
     return config;
@@ -34,17 +39,16 @@ const onResponseError = async (error: AxiosError): Promise<AxiosError> => {
             (error.response.status === 401 || error.response.status === 403) &&
             error.response.data.message === "jwt expired"
         ) {
-            const storedToken = JSON.parse(localStorage.getItem("token"));
+            const storedToken = localStorage.getItem("token");
 
             try {
                 const rs = await axios.post(`${API_URL}/auth/refresh`, {
-                    oldToken: storedToken.refresh_token,
+                    oldToken: storedToken,
                 });
 
-                const { token } = rs.data;
+                const { token } = rs.data.token;
 
-                localStorage.setItem("token", JSON.stringify(token));
-                // localStorage.setItem("user", JSON.stringify(user));
+                localStorage.setItem("token", token);
 
                 return;
             } catch (_error) {

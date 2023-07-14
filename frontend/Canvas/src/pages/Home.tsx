@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
+import api from "../api/api";
 import DrawingPreview from "../components/DrawingPreview";
 import { GlobalDispatchContext, GlobalStateContext, StateContext } from "../contexts/ReducerContext";
 import styles from "../styles/styles.module.css";
@@ -9,7 +10,6 @@ export default function Home() {
     const state = useContext(GlobalStateContext);
     const dispatch = useContext(GlobalDispatchContext);
     const [canvases, setCanvases] = useState<string[]>([]);
-
     useEffect(() => {
         const scrolling_function = () => {
             if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 10) {
@@ -24,7 +24,7 @@ export default function Home() {
 
     function fetchCanvases(pgNum: Number): void {
 
-        axios.get(`/canvas?pageNum=${pgNum}`)
+        axios.get(`/canvas?pageNum=${pgNum}`, { 'Authorization': localStorage.getItem("token") ? "Bearer " + localStorage.getItem("token") : "" })
             .then(can => can.data)
             .then(can => setCanvases(can));
         //@ts-ignore
