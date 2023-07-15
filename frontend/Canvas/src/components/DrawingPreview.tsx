@@ -2,7 +2,6 @@ import { Card, CardActionArea } from "@mui/material";
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
-import refresh from "../api/refresh";
 import { CanvasSizeContext, GlobalStateContext, StateContext } from "../contexts/ReducerContext";
 import styles from "../styles/styles.module.css";
 import { DrawingPreviewProps, GlobalState, state } from "../types";
@@ -30,7 +29,7 @@ export default function DrawingPreview(props: DrawingPreviewProps) {
             }
             return px;
         }
-        axios.get<Canvas>(`/canvas/${props.id}`, { 'Authorization': localStorage.getItem("token") ? "Bearer " + localStorage.getItem("token") : "" })
+        axios.get<Canvas>(`/canvas/${props.id}`, { 'Authentication': localStorage.getItem("token") ? "Bearer " + localStorage.getItem("token") : "" })
             .then(canvas => { setPixels(constructCanvas(canvas.data.drawings)) })
             .catch(err => refresh().then(token => localStorage.setItem("token", token)));
         ;

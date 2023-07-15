@@ -15,15 +15,15 @@ public interface UserRepositry extends MongoRepository<User, String> {
 
     Optional<User> findByEmail(String email);
 
-    @Query(value = "{'username': ?0}", fields = "{'canvases': 0}")
+    @Query(value = "{'username': ?0}", fields = "{'canvases': 1}")
     Optional<List<String>> getCanvasesByUsername(String name, Pageable pageable);
 
-    @Query(value = "{'_id': ?0}", fields = "{'canvases': 0}")
+    @Query(value = "{'_id': ?0}", fields = "{'canvases': 1}")
     Optional<List<String>> getCanvasesByUserId(String id, Pageable pageable);
 
-    @Query(value = "{'_id': ?0}", fields = "{'canvases': 0}")
+    @Query(value = "{'_id': ?0}", fields = "{'canvases': 1}")
     Optional<List<String>> getCanvasesByUserId(String id);
 
-    @Query(value = "{'username': ?0}", fields = "{'canvases': 0}")
+    @Query(value = "{'username': ?0}", fields = "{'canvases': 1}")
     Optional<List<String>> getCanvasesByUsername(String name);
 }

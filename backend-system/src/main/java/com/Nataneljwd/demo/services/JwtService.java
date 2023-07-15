@@ -1,6 +1,7 @@
 package com.Nataneljwd.demo.services;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -14,15 +15,16 @@ import java.util.function.Function;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
 @Service
 public class JwtService {
 
     private static final String SECRET_KEY = "6722CD45DDC7757E3655EF5F6FEFF9987H77FDS792JK";
-    private final Long refreshExpiration = 1000*60*60L;
+    private final Long refreshExpiration = 1000 * 60 * 60L;
 
-	public String extractUsername(String jwt) {
-		return extractClaim(jwt, Claims::getSubject);
-	}
+    public String extractUsername(String jwt) {
+        return extractClaim(jwt, Claims::getSubject);
+    }
 
     private Date extractExpirationDate(String token) {
         return extractClaim(token, Claims::getExpiration);
@@ -43,12 +45,12 @@ public class JwtService {
 
     private String buildToken(Map<String, Object> claims, UserDetails userDetails, long expiration) {
         return Jwts.builder()
-            .setClaims(claims)
-            .setSubject(userDetails.getUsername())
-            .setIssuedAt(new Date(System.currentTimeMillis()))
-            .setExpiration(new Date(System.currentTimeMillis() + expiration))
-            .signWith(getSignInKey(), SignatureAlgorithm.HS256)
-            .compact();
+                .setClaims(claims)
+                .setSubject(userDetails.getUsername())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
+                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
+                .compact();
     }
 
     public String generateToken(UserDetails userDetails, long expiration) {
@@ -59,13 +61,19 @@ public class JwtService {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
+
     private Claims extractAllClaims(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(getSignInKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(getSignInKey())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (ExpiredJwtException e) {
+            return e.getClaims();
+        }
     }
+
     private Key getSignInKey() {
         byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
         return Keys.hmacShaKeyFor(keyBytes);

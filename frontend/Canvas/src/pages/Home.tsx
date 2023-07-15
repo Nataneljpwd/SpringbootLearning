@@ -1,7 +1,5 @@
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
-import api from "../api/api";
-import refresh from "../api/refresh";
 import DrawingPreview from "../components/DrawingPreview";
 import { GlobalDispatchContext, GlobalStateContext, StateContext } from "../contexts/ReducerContext";
 import styles from "../styles/styles.module.css";
@@ -24,11 +22,9 @@ export default function Home() {
     }, []);
 
     function fetchCanvases(pgNum: Number): void {
-
-        axios.get(`/canvas?pageNum=${pgNum}`, { 'Authorization': localStorage.getItem("token") ? "Bearer " + localStorage.getItem("token") : "" })
+        axios.get(`/canvas?pageNum=${pgNum}`, { 'Authentication': localStorage.getItem("token") ? "Bearer " + localStorage.getItem("token") : "" })
             .then(can => can.data)
             .then(can => setCanvases(can))
-            .catch(err => refresh().then(token => localStorage.setItem("token", token)))
         //@ts-ignore
         dispatch({ type: "addPageNumber" });//TODO: might be a bug where there are limited amount of canvases and it fetches 1 page and then skips canvases
     }

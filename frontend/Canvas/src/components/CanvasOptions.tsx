@@ -2,11 +2,11 @@ import styles from "../styles/styles.module.css"
 import { faEraser, faFillDrip, faPaintbrush, faRedo, faSave, faUndo } from "@fortawesome/free-solid-svg-icons";
 import IconButton from "./IconButton";
 import { useContext, useState } from "react";
-import { DispatchContext, StateContext } from "../contexts/ReducerContext";
-import { state } from "../types";
+import { DispatchContext, GlobalStateContext, StateContext } from "../contexts/ReducerContext";
+import { GlobalState, state } from "../types";
 import { HexColorPicker } from "react-colorful";
 import axios from "axios";
-import api from "../api/api";
+import refresh from "../api/refresh";
 
 
 export default function CanvasOptions() {
@@ -14,6 +14,7 @@ export default function CanvasOptions() {
     const dispatch = useContext<({ }) => state>(DispatchContext);
     //@ts-ignore
     const state = useContext<state>(StateContext);
+    const globalState = useContext<GlobalState>(GlobalStateContext);
 
     const [collapsed, setCollapsed] = useState<boolean>(true);
     const [hover, setHover] = useState(false);
@@ -51,11 +52,14 @@ export default function CanvasOptions() {
     }
 
     function saveCanvas(state: state) {
-        api.post("/canvas", {
-            drawings: state.drawings,
-            owner: "test",//TODO: implement auth in frontend and implement 
-            ownerId: 123123
+        // axios.post("/canvas", {
+        //     drawings: state.drawings,
+        //     ownerId: globalState.userId
+        // }).catch(err => console.log(err, " test"))
+        axios.post("/canvas", {}, {
+            'Authentication': 'Bearer ' + localStorage.getItem("token")
         })
+        // .catch(err => refresh().then(token => localStorage.setItem("token", token)))
     }
 
     return (

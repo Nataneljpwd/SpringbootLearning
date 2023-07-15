@@ -6,7 +6,6 @@ import { action, GlobalState, state } from "../types";
 import canvasReducer from "../reducers/canvasReducer";
 
 
-
 const initState: state = {
     pixels: [["#000000"]],
     drawings: [[]],
@@ -15,7 +14,6 @@ const initState: state = {
     mode: "brush",
     redoArray: [],
 };
-
 
 
 export default function DrawingPage() {

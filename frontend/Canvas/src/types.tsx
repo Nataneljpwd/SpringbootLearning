@@ -38,11 +38,12 @@ export type DrawingPreviewProps = {
 export type GlobalState = {
     page: number,
     canvasSize: { rows: number, cols: number },
+    userId: string,
+    userName: string,
 }
 export type GlobalDispatch = {
     dispatch: Dispatch<any>,
 }
 export type GlobalAction = {
     type: String,
-
 }

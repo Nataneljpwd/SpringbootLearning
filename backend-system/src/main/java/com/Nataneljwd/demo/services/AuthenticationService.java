@@ -2,6 +2,7 @@ package com.Nataneljwd.demo.services;
 
 import com.Nataneljwd.demo.repositry.UserRepositry;
 import com.Nataneljwd.demo.security.*;
+
 import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
@@ -54,10 +55,12 @@ public class AuthenticationService {
     }
 
     public String refresh(String oldJwt) {
-        String email = jwtService.extractUsername(oldJwt);
-        UserDetails user = userRepositry.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Email Not Found"));
-        String jwt = jwtService.generateRefreshToken(user);
-        return jwt;
+        throw new UsernameNotFoundException("test");
+        // String email = jwtService.extractUsername(oldJwt);
+        // UserDetails user = userRepositry.findByEmail(email)
+        // .orElseThrow(() -> new UsernameNotFoundException("Email Not Found"));
+        // String jwt = jwtService.generateRefreshToken(user);
+        // System.out.println(jwt);
+        // return jwt;
     }
 }
