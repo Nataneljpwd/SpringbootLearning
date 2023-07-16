@@ -21,10 +21,12 @@ public class CanvasService {
 
     private final CanvasRepositry canvasRepository;
     private final UserRepositry userRepositry;
+    private final JwtService jwtService;
 
-    public CanvasService(CanvasRepositry canvasRepository, UserRepositry userRepositry) {
+    public CanvasService(CanvasRepositry canvasRepository, UserRepositry userRepositry, JwtService jwtService) {
         this.canvasRepository = canvasRepository;
         this.userRepositry = userRepositry;
+        this.jwtService = jwtService;
     }
 
     /**
@@ -38,10 +40,13 @@ public class CanvasService {
     }
 
     public String saveCanvas(Canvas canvas) {
-        String st = canvasRepository.save(canvas).getId();
-        User user = userRepositry.findById(canvas.getOwnerId())
+        String st = canvas.getId();
+        String email = jwtService.extractUsername(canvas.getOwnerId());
+        User user = userRepositry.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException("Owner does not exist"));
+        canvas.setOwnerId(user.getId());
         user.getCanvases().add(canvas.getId());
+        canvasRepository.save(canvas);
         userRepositry.save(user);
         return st;
     }

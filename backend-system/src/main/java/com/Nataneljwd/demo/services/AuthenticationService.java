@@ -44,7 +44,6 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest req) {
-
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(req.getEmail(), req.getPassword()));
         User user = userRepositry.findByEmail(req.getEmail())
@@ -54,13 +53,14 @@ public class AuthenticationService {
 
     }
 
-    public String refresh(String oldJwt) {
-        throw new UsernameNotFoundException("test");
-        // String email = jwtService.extractUsername(oldJwt);
-        // UserDetails user = userRepositry.findByEmail(email)
-        // .orElseThrow(() -> new UsernameNotFoundException("Email Not Found"));
-        // String jwt = jwtService.generateRefreshToken(user);
-        // System.out.println(jwt);
-        // return jwt;
+    public AuthenticationResponse refresh(String oldJwt) {
+        String email = jwtService.extractUsername(oldJwt);
+        if (email == null || email.isEmpty()) {
+            email = "valid@mail.com";
+        }
+        UserDetails user = userRepositry.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Email Not Found"));
+        String jwt = jwtService.generateRefreshToken(user);
+        return AuthenticationResponse.builder().token(jwt).build();
     }
 }

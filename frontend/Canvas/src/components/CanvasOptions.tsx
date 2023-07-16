@@ -52,13 +52,12 @@ export default function CanvasOptions() {
     }
 
     function saveCanvas(state: state) {
-        // axios.post("/canvas", {
-        //     drawings: state.drawings,
-        //     ownerId: globalState.userId
-        // }).catch(err => console.log(err, " test"))
-        axios.post("/canvas", {}, {
-            'Authentication': 'Bearer ' + localStorage.getItem("token")
-        })
+        axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
+        axios.post("/canvas", {
+            drawings: state.drawings,
+            ownerId: localStorage.getItem("token"),
+            //pass the token instead
+        }).catch(err => console.log(err))
         // .catch(err => refresh().then(token => localStorage.setItem("token", token)))
     }
 

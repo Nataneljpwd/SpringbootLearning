@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties.Authentication;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -78,6 +79,7 @@ public class CanvasController {
     @PostMapping
     public ResponseEntity<String> saveCanvas(@RequestBody Canvas canvas) {
         return new ResponseEntity(canvasService.saveCanvas(canvas), HttpStatus.CREATED);
+        // HttpStatus.CREATED);
     }
 
     @PostMapping("/update")

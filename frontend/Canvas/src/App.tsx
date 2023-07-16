@@ -17,6 +17,7 @@ axios.defaults.baseURL = 'http://localhost:8080/api/v1';
 const initState: GlobalState = {
     page: 0,
     canvasSize: { rows: 40, cols: 50 },
+    userId: "",
 }
 function App() {
     const [globalState, dispatch] = useReducer(reducer, initState);

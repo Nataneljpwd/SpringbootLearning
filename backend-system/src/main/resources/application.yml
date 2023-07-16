@@ -3,3 +3,10 @@ spring:
     mongodb:
        uri: mongodb://localhost:27017/test
        database: spring-test
+
+  logging:
+    level:
+      root: ERROR
+      org.springframework.web: DEBUG
+      com.Nataneljpwd: DEBUG
+
