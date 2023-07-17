@@ -85,15 +85,16 @@ public class CanvasController {
     @PostMapping
     @CachePut(value = "canvases", key = "#id")
     public ResponseEntity<String> saveCanvas(@RequestBody Canvas canvas) {
-        return new ResponseEntity(canvasService.saveCanvas(canvas), HttpStatus.CREATED);
+        return new ResponseEntity(canvasService.saveOrUpdateCanvas(canvas), HttpStatus.CREATED);
         // HttpStatus.CREATED);
     }
 
-    @PutMapping()
-    @CachePut(value = "canvases", key = "#id")
-    public ResponseEntity<String> updateCanvas(@RequestBody Canvas canvas) {
-        return new ResponseEntity(canvasService.updateCanvasById(canvas.getId(), canvas), HttpStatus.OK);
-    }
+    // @PutMapping()
+    // @CachePut(value = "canvases", key = "#id")
+    // public ResponseEntity<String> updateCanvas(@RequestBody Canvas canvas) {
+    // return new ResponseEntity(canvasService.updateCanvasById(canvas.getId(),
+    // canvas), HttpStatus.OK);
+    // }
 
     @DeleteMapping("/{id}")
     @CacheEvict(value = "canvases", key = "#id")

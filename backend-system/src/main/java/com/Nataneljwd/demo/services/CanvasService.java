@@ -33,11 +33,28 @@ public class CanvasService {
     /**
      * @return id of the updated canvas or throw [{@link NotFoundException}]
      */
-    public String updateCanvasById(String id, Canvas canvas) {
+    public String updateCanvasById(Canvas canvas) {
+        String id = canvas.getId();
         Canvas c = canvasRepository.findById(id).orElseThrow(() -> new NotFoundException("Canvas not found"));
+        if(canvas.getOwnerId() != null){
+            User user = userRepositry.findById(jwtService.extractUsername(canvas.getOwnerId())).orElseThrow(() -> new NotFoundException("Owner does not exist"));
+            if(user.getCanvases().contains(id)){
+                c.setOwnerId(user.getId());
+                canvasRepository.save(c);
+                user.getCanvases().add(c.getId());
+                userRepositry.save(user);
+            }
+        }
         c.setDrawings(canvas.getDrawings());
         canvasRepository.save(c);
         return c.getId();
+    }
+
+    public String saveOrUpdateCanvas(Canvas canvas) {
+        if(canvasRepository.findById(canvas.getId()).isPresent()){
+            return updateCanvasById(canvas);
+        }
+        return saveCanvas(canvas);
     }
 
     public String saveCanvas(Canvas canvas) {

@@ -6,7 +6,7 @@ import { DispatchContext, GlobalStateContext, StateContext } from "../contexts/R
 import { GlobalState, state } from "../types";
 import { HexColorPicker } from "react-colorful";
 import axios from "axios";
-import refresh from "../api/refresh";
+import { useApi } from "../api/api";
 
 
 export default function CanvasOptions() {
@@ -18,6 +18,7 @@ export default function CanvasOptions() {
 
     const [collapsed, setCollapsed] = useState<boolean>(true);
     const [hover, setHover] = useState(false);
+    const api = useApi();
 
     const changeColor = (color: string) => {
         dispatch({ type: "CHANGE_COLOR", color: color });
@@ -52,10 +53,9 @@ export default function CanvasOptions() {
     }
 
     function saveCanvas(state: state) {
-        axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem("token");
-        axios.post("/canvas", {
+        api.post("/canvas", {
             drawings: state.drawings,
-            ownerId: localStorage.getItem("token"),
+            ownerId: "Bearer " + localStorage.getItem("token"),
             //pass the token instead
         }).catch(err => console.log(err))
         // .catch(err => refresh().then(token => localStorage.setItem("token", token)))
