@@ -2,7 +2,6 @@ package com.Nataneljwd.demo.repositry;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -19,6 +18,11 @@ public interface CanvasRepositry extends MongoRepository<Canvas, String> {
      * @param pageable
      * @return list of {@link Canvas} id's by owner name
      */
+    @Query(value = "{'owner': ?0}", fields = "{'_id': 1}")
+    public Page<String> getCanvasesByOwner(String owner, Pageable pageable);
+
+    @Query(value = "{'owner': ?0}", fields = "{'_id': 1}")
+    public Page<Canvas> getCanvasesByOwnerId(String ownerId, Pageable pageable);
 
     public void deleteCanvasById(String id);
 

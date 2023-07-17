@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import com.Nataneljwd.demo.Exceptions.NotFoundException;
+import com.Nataneljwd.demo.Exceptions.UnauthorizedException;
 import com.Nataneljwd.demo.Models.Canvas;
 import com.Nataneljwd.demo.repositry.CanvasRepositry;
 import com.Nataneljwd.demo.repositry.UserRepositry;
@@ -53,7 +54,13 @@ public class CanvasService {
 
     public String deleteCanvasById(String id) {
         if (canvasRepository.existsById(id)) {
-            canvasRepository.deleteById(id);
+            User user = userRepositry.findById(canvasRepository.findById(id).get().getOwnerId())
+                    .orElseThrow(() -> new NotFoundException("Owner does not exist"));
+            if (user.getCanvases().contains(id)) {
+                canvasRepository.deleteById(id);
+            } else {
+                throw new UnauthorizedException("This is not your canvas");
+            }
         } else {
             throw new NotFoundException("Canvas does not exist");
         }
