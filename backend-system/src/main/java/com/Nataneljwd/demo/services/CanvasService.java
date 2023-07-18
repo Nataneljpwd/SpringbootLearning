@@ -1,12 +1,15 @@
 package com.Nataneljwd.demo.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
@@ -33,40 +36,76 @@ public class CanvasService {
     /**
      * @return id of the updated canvas or throw [{@link NotFoundException}]
      */
-    public String updateCanvasById(Canvas canvas) {
+
+    public Canvas updateCanvasById(Canvas canvas, String jwt) {
         String id = canvas.getId();
         Canvas c = canvasRepository.findById(id).orElseThrow(() -> new NotFoundException("Canvas not found"));
-        if(canvas.getOwnerId() != null){
-            User user = userRepositry.findById(jwtService.extractUsername(canvas.getOwnerId())).orElseThrow(() -> new NotFoundException("Owner does not exist"));
-            if(user.getCanvases().contains(id)){
+        if (canvas.getOwnerId() != null) {
+            User user = userRepositry.findById(jwtService.extractUsername(jwt))
+                    .orElseThrow(() -> new NotFoundException("Owner does not exist"));
+            if (user.getCanvases().contains(id)) {
                 c.setOwnerId(user.getId());
                 canvasRepository.save(c);
                 user.getCanvases().add(c.getId());
                 userRepositry.save(user);
+            } else {
+                // this is a remix of a canvas
+                canvas.getRemixes().add(user.getId());
+                canvasRepository.save(c);
+                canvas.setId(null);
+                canvas.setOwnerId(user.getId());
+                canvasRepository.save(canvas);
             }
+        } else {
+            // canvas request is invalid
+            throw new BadCredentialsException("Invalid Request Data");
         }
         c.setDrawings(canvas.getDrawings());
         canvasRepository.save(c);
-        return c.getId();
+        return c;
     }
 
-    public String saveOrUpdateCanvas(Canvas canvas) {
-        if(canvasRepository.findById(canvas.getId()).isPresent()){
-            return updateCanvasById(canvas);
+    public String saveOrUpdateCanvas(Canvas canvas, String jwt) {
+        if (canvasRepository.findById(canvas.getId()).isPresent()) {
+            return updateCanvasById(canvas, jwt).getId();
         }
-        return saveCanvas(canvas);
+        return saveCanvas(canvas).getId();
     }
 
-    public String saveCanvas(Canvas canvas) {
+    /**
+     * @return a boolean saying whether the canvas is favoured by us or no
+     */
+    public boolean toggleFavouriteCanvasById(String id, String jwt) {
+        Canvas c = canvasRepository.findById(id).orElseThrow(() -> new NotFoundException("Canvas not found"));
+        User user = userRepositry.findById(jwtService.extractUsername(jwt))
+                .orElseThrow(() -> new NotFoundException("Owner does not exist"));
+        if (!user.getFavourites().contains(id)) {
+            user.getFavourites().add(id);
+            c.getFavourites().add(user.getId());
+            canvasRepository.save(c);
+            userRepositry.save(user);
+            return true;
+        } else {
+            user.getFavourites().remove(id);
+            c.getFavourites().remove(user.getId());
+            canvasRepository.save(c);
+            userRepositry.save(user);
+            return false;
+        }
+    }
+
+    public Canvas saveCanvas(Canvas canvas) {
         String st = canvas.getId();
         String email = jwtService.extractUsername(canvas.getOwnerId());
         User user = userRepositry.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException("Owner does not exist"));
         canvas.setOwnerId(user.getId());
         user.getCanvases().add(canvas.getId());
+        canvas.setFavourites(new ArrayList<String>());
+        canvas.setRemixes(new ArrayList<String>());
         canvasRepository.save(canvas);
         userRepositry.save(user);
-        return st;
+        return canvas;
     }
 
     public String deleteCanvasById(String id) {

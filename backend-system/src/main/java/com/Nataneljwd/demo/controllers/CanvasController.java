@@ -2,17 +2,11 @@ package com.Nataneljwd.demo.controllers;
 
 import java.util.List;
 
-import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties.Authentication;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,8 +18,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.Nataneljwd.demo.Models.Canvas;
-import com.Nataneljwd.demo.services.AuthenticationService;
 import com.Nataneljwd.demo.services.CanvasService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api/v1/canvas")
@@ -45,7 +40,6 @@ public class CanvasController {
     }
 
     @GetMapping("/{id}")
-    @Cacheable(value = "canvases", key = "#id")
     public ResponseEntity<Canvas> getCanvas(@PathVariable String id) {
         return new ResponseEntity(canvasService.getCanvasById(id), HttpStatus.OK);
     }
@@ -83,10 +77,17 @@ public class CanvasController {
     }
 
     @PostMapping
-    @CachePut(value = "canvases", key = "#id")
-    public ResponseEntity<String> saveCanvas(@RequestBody Canvas canvas) {
-        return new ResponseEntity(canvasService.saveOrUpdateCanvas(canvas), HttpStatus.CREATED);
+    public ResponseEntity<String> saveCanvas(@RequestBody Canvas canvas, HttpServletRequest req) {
+        return new ResponseEntity(canvasService.saveOrUpdateCanvas(canvas, req.getHeader("Authorization")).substring(7),
+                HttpStatus.CREATED);
         // HttpStatus.CREATED);
+    }
+
+    @PutMapping("/favourite/{id}")
+    public ResponseEntity<Boolean> favouriteCanvas(@PathVariable String id, HttpServletRequest req) {
+        return new ResponseEntity(
+                canvasService.toggleFavouriteCanvasById(id, req.getHeader("Authorization").substring(7)),
+                HttpStatus.OK);
     }
 
     // @PutMapping()

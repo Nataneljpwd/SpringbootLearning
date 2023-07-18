@@ -28,6 +28,7 @@ public class AuthenticationService {
     public AuthenticationResponse register(User user) {
         user.setCanvases(new ArrayList<String>());
         user.setRole(Role.USER);
+        user.setFavourites(new ArrayList<String>());
         Optional<User> check = userRepositry.findByEmail(user.getEmail());
 
         if (check.isPresent()) {

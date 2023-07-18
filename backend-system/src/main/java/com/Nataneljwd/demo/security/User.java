@@ -44,6 +44,8 @@ public class User implements UserDetails {
 
     private List<String> canvases;// contains the list of canvas ids of the person
 
+    private List<String> favourites;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         // TODO Auto-generated method stub

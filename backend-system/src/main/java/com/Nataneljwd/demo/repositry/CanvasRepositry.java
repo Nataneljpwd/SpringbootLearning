@@ -1,5 +1,7 @@
 package com.Nataneljwd.demo.repositry;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -11,6 +13,7 @@ import com.Nataneljwd.demo.Models.Canvas;
 @Repository
 public interface CanvasRepositry extends MongoRepository<Canvas, String> {
 
+    @CachePut(value = "canvases", key = "#id")
     public Canvas getCanvasById(String id);
 
     /**
@@ -24,6 +27,7 @@ public interface CanvasRepositry extends MongoRepository<Canvas, String> {
     @Query(value = "{'owner': ?0}", fields = "{'_id': 1}")
     public Page<Canvas> getCanvasesByOwnerId(String ownerId, Pageable pageable);
 
+    @CacheEvict(value = "canvases", key = "#id")
     public void deleteCanvasById(String id);
 
     // @Query(fields = "{'_id': 0}", value = "{'owner': ?0}")
