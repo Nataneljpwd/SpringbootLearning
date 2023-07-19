@@ -57,7 +57,7 @@ public class AuthenticationService {
     public AuthenticationResponse refresh(String oldJwt) {
         String email = jwtService.extractUsername(oldJwt);
         if (email == null || email.isEmpty()) {
-            email = "valid@mail.com";
+            throw new BadCredentialsException("JWT Token is not valid or user with such email does not exist");
         }
         UserDetails user = userRepositry.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Email Not Found"));

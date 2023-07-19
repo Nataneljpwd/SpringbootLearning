@@ -27,7 +27,8 @@ function App() {
                     <Navbar />
                     <BrowserRouter>
                         <Routes>
-                            <Route path="/canvas" element={<DrawingPage />} />
+                            <Route path="/canvas/:id" element={<DrawingPage />} />
+                            <Route path="/canvas/" element={<DrawingPage />} />
                             <Route path="/" element={<Home />} />
                             <Route path="/login" element={<Login />} />
                             <Route path="/register" element={<Register />} />
@@ -41,6 +42,9 @@ function App() {
         switch (action.type) {
             case "addPageNumber":
                 return { ...state, page: state.page + 1 };
+
+            case "resetPageNumber":
+                return { ...state, page: 0 };
             default:
                 return state;
         }

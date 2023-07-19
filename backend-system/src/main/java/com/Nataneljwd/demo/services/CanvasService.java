@@ -2,6 +2,7 @@ package com.Nataneljwd.demo.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
@@ -41,7 +42,7 @@ public class CanvasService {
         String id = canvas.getId();
         Canvas c = canvasRepository.findById(id).orElseThrow(() -> new NotFoundException("Canvas not found"));
         if (canvas.getOwnerId() != null) {
-            User user = userRepositry.findById(jwtService.extractUsername(jwt))
+            User user = userRepositry.findByEmail(jwtService.extractUsername(jwt))
                     .orElseThrow(() -> new NotFoundException("Owner does not exist"));
             if (user.getCanvases().contains(id)) {
                 c.setOwnerId(user.getId());
@@ -53,8 +54,7 @@ public class CanvasService {
                 canvas.getRemixes().add(user.getId());
                 canvasRepository.save(c);
                 canvas.setId(null);
-                canvas.setOwnerId(user.getId());
-                canvasRepository.save(canvas);
+                saveCanvas(canvas);
             }
         } else {
             // canvas request is invalid
@@ -77,7 +77,7 @@ public class CanvasService {
      */
     public boolean toggleFavouriteCanvasById(String id, String jwt) {
         Canvas c = canvasRepository.findById(id).orElseThrow(() -> new NotFoundException("Canvas not found"));
-        User user = userRepositry.findById(jwtService.extractUsername(jwt))
+        User user = userRepositry.findByEmail(jwtService.extractUsername(jwt))
                 .orElseThrow(() -> new NotFoundException("Owner does not exist"));
         if (!user.getFavourites().contains(id)) {
             user.getFavourites().add(id);
@@ -92,6 +92,18 @@ public class CanvasService {
             userRepositry.save(user);
             return false;
         }
+    }
+
+    public List<String> getFavouritesByUsername(String userName, Pageable pageable) {
+        User user = userRepositry.findByUsername(userName)
+                .orElseThrow(() -> new NotFoundException("User does not exist"));
+        return user.getFavourites();
+    }
+
+    public List<String> getFavouritesByToken(String jwt, Pageable pageable) {
+        User user = userRepositry.findByEmail(jwtService.extractUsername(jwt))
+                .orElseThrow(() -> new NotFoundException("User does not exist"));
+        return user.getFavourites();
     }
 
     public Canvas saveCanvas(Canvas canvas) {
@@ -109,8 +121,9 @@ public class CanvasService {
     }
 
     public String deleteCanvasById(String id) {
-        if (canvasRepository.existsById(id)) {
-            User user = userRepositry.findById(canvasRepository.findById(id).get().getOwnerId())
+        Optional<Canvas> c = canvasRepository.findById(id);
+        if (c.isPresent()) {
+            User user = userRepositry.findById(c.get().getOwnerId())
                     .orElseThrow(() -> new NotFoundException("Owner does not exist"));
             if (user.getCanvases().contains(id)) {
                 canvasRepository.deleteById(id);
@@ -135,7 +148,7 @@ public class CanvasService {
     }
 
     public List<String> getCanvases(Pageable pageable) {
-        List<String> lst = canvasRepository.findAll(pageable).getContent().stream().map(canvas -> canvas.getId())
+        List<String> lst = canvasRepository.findAll(pageable).toList().stream().map(c -> c.getId())
                 .collect(Collectors.toList());
         return lst;
     }
@@ -152,7 +165,7 @@ public class CanvasService {
         return lst;
     }
 
-    public List<String> getAllCanvasesByownerName(String owner) {
+    public List<String> getAllCanvasesByownerName(String owner) {// TODO: add pagination
         List<String> lst = userRepositry.getCanvasesByUsername(owner)
                 .orElseThrow(() -> new NotFoundException("Owner does not exist or has no canvases"));
         return lst;

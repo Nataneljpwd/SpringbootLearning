@@ -61,6 +61,13 @@ public class CanvasController {
         return new ResponseEntity<List<String>>(canvases, HttpStatus.OK);
     }
 
+    @GetMapping("/favourites")
+    public ResponseEntity<List<String>> getFavourites(@RequestParam(defaultValue = "0") int pageNum, HttpServletRequest req) {
+        Pageable pageable = PageRequest.of(pageNum, 15);
+        List<String> canvases = canvasService.getFavouritesByToken(req.getHeader("Authorization").substring(7),pageable);
+        return new ResponseEntity<List<String>>(canvases, HttpStatus.OK);
+    }
+
     @GetMapping("/owner/all")
     public ResponseEntity<List<String>> getAllCanvasesByOwnerNameOrId(@RequestParam(required = false) String ownerId,
             @RequestParam(required = false) String ownerName) {

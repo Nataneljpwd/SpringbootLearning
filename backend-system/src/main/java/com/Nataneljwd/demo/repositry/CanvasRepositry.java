@@ -21,11 +21,6 @@ public interface CanvasRepositry extends MongoRepository<Canvas, String> {
      * @param pageable
      * @return list of {@link Canvas} id's by owner name
      */
-    @Query(value = "{'owner': ?0}", fields = "{'_id': 1}")
-    public Page<String> getCanvasesByOwner(String owner, Pageable pageable);
-
-    @Query(value = "{'owner': ?0}", fields = "{'_id': 1}")
-    public Page<Canvas> getCanvasesByOwnerId(String ownerId, Pageable pageable);
 
     @CacheEvict(value = "canvases", key = "#id")
     public void deleteCanvasById(String id);
