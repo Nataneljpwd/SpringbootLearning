@@ -119,7 +119,7 @@ export default function DrawingPreview(props: DrawingPreviewProps) {
     }
     if (state.pixels) {
         return (
-            <Card className={styles.canvasPreviewCard}>
+            <Card className={styles.canvasPreviewCard} sx={{ position: 'relative' }}>
                 <CardActionArea component={RouterLink} to={'/canvas/' + props.id} sx={{ width: '100%', height: '100%' }}>
                     <div style={{ gridTemplateColumns: 'repeat(' + globalState.canvasSize.cols + ',minmax(1px,1fr))', gridTemplateRows: 'repeat(' + globalState.canvasSize.rows + ',minmax(1px,1fr))' }} className={styles.canvasPreview}>
                         {state.pixels.map((row: string[]) => {
@@ -129,12 +129,12 @@ export default function DrawingPreview(props: DrawingPreviewProps) {
                         })}
                     </div>
                 </CardActionArea>
-                <CardActions>
+                <CardActions sx={{ position: 'absolute', bottom: 0 }}>
                     <Fab color="primary" aria-label="fav" onClick={toggleFav}>
                         {fav.includes(globalState.userId) ? <GradeIcon /> : <GradeOutlinedIcon />}
                     </Fab>
-                    <Fab color="primary" aria-label="remix" variant="extended">
-                        {remixes.length}
+                    <Fab color="primary" aria-label="remix" variant="extended" sx={{ fontSize: '1.5rem', padding: '0.5rem' }}>
+                        {remixes.length + " "}
                         Remixes
                     </Fab>
                 </CardActions>
