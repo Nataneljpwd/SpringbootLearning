@@ -1,5 +1,6 @@
 package com.Nataneljwd.demo.security;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -8,6 +9,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import com.fasterxml.jackson.annotation.JsonAlias;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -31,6 +34,7 @@ public class User implements UserDetails {
 
     @NotNull
     @Size(min = 3, max = 32, message = "Username must be between 3 and 32 characters")
+    @JsonAlias("userName")
     private String username;
 
     @Size(min = 8, max = 48, message = "Password must be between 8 and 48 characters")

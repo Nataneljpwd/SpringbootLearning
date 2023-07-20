@@ -46,4 +46,6 @@ export type GlobalDispatch = {
 }
 export type GlobalAction = {
     type: String,
+    userId?: string,
+    username?: string,
 }

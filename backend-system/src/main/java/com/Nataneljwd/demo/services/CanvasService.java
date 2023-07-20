@@ -1,6 +1,7 @@
 package com.Nataneljwd.demo.services;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -79,8 +80,11 @@ public class CanvasService {
         Canvas c = canvasRepository.findById(id).orElseThrow(() -> new NotFoundException("Canvas not found"));
         User user = userRepositry.findByEmail(jwtService.extractUsername(jwt))
                 .orElseThrow(() -> new NotFoundException("Owner does not exist"));
-        if (!user.getFavourites().contains(id)) {
-            user.getFavourites().add(id);
+        if (user.getFavourites() == null || !user.getFavourites().contains(id)) {
+            user.setFavourites(Arrays.asList(new String[] { c.getId() }));
+            if (c.getFavourites() == null) {
+                c.setFavourites(new ArrayList<String>());
+            }
             c.getFavourites().add(user.getId());
             canvasRepository.save(c);
             userRepositry.save(user);

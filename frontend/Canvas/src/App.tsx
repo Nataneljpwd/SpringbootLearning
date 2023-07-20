@@ -5,21 +5,28 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import DrawingPage from './pages/DrawingPage';
 import Home from './pages/Home';
 import { CanvasSizeContext, GlobalDispatchContext, GlobalStateContext } from './contexts/ReducerContext';
-import { useReducer } from 'react';
+import { useEffect, useReducer } from 'react';
 import { GlobalState, GlobalAction } from './types';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import axios from 'axios';
+import { useApi } from './api/api';
 
 
 
 const initState: GlobalState = {
+    userName: "",
     page: 0,
     canvasSize: { rows: 40, cols: 50 },
     userId: "",
 }
 function App() {
     const [globalState, dispatch] = useReducer(reducer, initState);
+    const api = useApi();
+    useEffect(() => {
+        api.get("/user")
+            .then(data => data.data)
+            .then(data => dispatch({ type: "SET_USER_INFO", username: data.userName, userId: data.id }));
+    }, [])
     return (
         <div className="App">
             <GlobalStateContext.Provider value={globalState}>
@@ -45,6 +52,10 @@ function App() {
 
             case "resetPageNumber":
                 return { ...state, page: 0 };
+
+            case "SET_USER_INFO":
+                if (!action.userId || !action.username) return state;
+                return { ...state, userName: action.username, userId: action.userId };
             default:
                 return state;
         }

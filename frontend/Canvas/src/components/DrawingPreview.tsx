@@ -65,8 +65,8 @@ export default function DrawingPreview(props: DrawingPreviewProps) {
             case "TOGGLE_FAV":
                 return {
                     ...state,
-                    favourites: state.favourites.push(globalState.userId),
-                    favourited: action.favoured
+                    favourites: !state.favourited ? state.favourites.push(globalState.userId) : state.favourites.filter(id => id != globalState.userId),
+                    favourited: !state.favourited
                 }
             case "CONSTRUCT":
                 if (!action.data) return state;
@@ -74,8 +74,7 @@ export default function DrawingPreview(props: DrawingPreviewProps) {
                 return {
                     ...canvas,
                     favourited: canvas.favourites.includes(globalState.userId),
-                    // pixelsHash: simpleHash(JSON.stringify(action.data.drawings)),
-                    pixelsHash: ""
+                    pixelsHash: simpleHash(JSON.stringify(action.data.drawings)),
                 }
             case "UPDATE":
                 if (!action.data) return state;
@@ -93,9 +92,6 @@ export default function DrawingPreview(props: DrawingPreviewProps) {
     }
 
 
-    const [pixels, setPixels] = useState<String[][] | undefined>();
-    const [fav, setFav] = useState([]);
-    const [remixes, setRemixes] = useState([]);
     const globalState = useContext(GlobalStateContext);
     const [state, dispatch] = useReducer(reducer, initState);
     const api = useApi();
@@ -103,8 +99,7 @@ export default function DrawingPreview(props: DrawingPreviewProps) {
     useEffect(() => {
         api.get<Canvas>(`/canvas/${props.id}`)
             .then(canvas => { dispatch({ type: "CONSTRUCT", data: canvas.data }); });
-    }, []);
-    //add in the backend the favourites and the remixes count that will udate every 30 seconds
+    }, []);//TODO: fix the bug where for some reason after favouriting the favourites and remixes become weird (undefined or number)
     useInterval(async () => await api.get(`/canvas/${props.id}`).then(canvas => canvas), 60);//every 30 seconds
 
     const toggleFav = () => {
@@ -112,7 +107,7 @@ export default function DrawingPreview(props: DrawingPreviewProps) {
             .then(res => res.data)
             .then(data => dispatch({ type: "TOGGLE_FAV", favoured: data }))
             .catch(err => {
-                if (err.response.status == 401) {
+                if (err?.response?.status == 401) {
                     nav("/login", { state: { msg: "You must be authorized in order to like a canvas" } });
                 }
             });
@@ -131,10 +126,10 @@ export default function DrawingPreview(props: DrawingPreviewProps) {
                 </CardActionArea>
                 <CardActions sx={{ position: 'absolute', bottom: 0 }}>
                     <Fab color="primary" aria-label="fav" onClick={toggleFav}>
-                        {fav.includes(globalState.userId) ? <GradeIcon /> : <GradeOutlinedIcon />}
+                        {state.favourited ? <GradeIcon /> : <GradeOutlinedIcon />}
                     </Fab>
                     <Fab color="primary" aria-label="remix" variant="extended" sx={{ fontSize: '1.5rem', padding: '0.5rem' }}>
-                        {remixes.length + " "}
+                        {state.remixes.length + " "}
                         Remixes
                     </Fab>
                 </CardActions>
@@ -149,7 +144,7 @@ export default function DrawingPreview(props: DrawingPreviewProps) {
         )
     }
 
-    function constructCanvas(canvas: { drawings: { pos: number[], color: string }[][], owner: string, id: String, ownerId: number, favourites: string[], remixes: string[] }) {
+    function constructCanvas(canvas: { drawings: { pos: number[], color: string }[][], owner: string, id: String, ownerId: string, favourites: string[], remixes: string[] }) {
 
         let data = canvas;
         let drawings = data.drawings;
@@ -163,10 +158,10 @@ export default function DrawingPreview(props: DrawingPreviewProps) {
         if (!data.favourites) {
             data.favourites = [];
         }
-        if (data.remixes) {
+        if (!data.remixes) {
             data.remixes = [];
         }
 
-        return { pixels: px, favourites: data.favourites, remixes: data.remixes };
+        return { pixels: px, favourites: data.favourites, remixes: data.remixes, ownerId: data.ownerId, owner: data.owner };
     }
 }

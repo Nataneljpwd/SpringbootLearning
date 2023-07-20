@@ -40,7 +40,7 @@ export default function RegisterForm() {
 
     const onSubmitHandler = (data: RegisterInput) => {
         axios.post("http://localhost:8080/api/v1/auth/register", data)
-            .then(response => { localStorage.setItem("token", response.data.data); console.log(response.data.token, "response"); });
+            .then(response => { localStorage.setItem("token", response.data.token); console.log(response.data.token, "response"); });
         console.log(data);
     }
 

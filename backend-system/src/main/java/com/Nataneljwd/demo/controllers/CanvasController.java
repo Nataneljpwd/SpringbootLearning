@@ -62,9 +62,11 @@ public class CanvasController {
     }
 
     @GetMapping("/favourites")
-    public ResponseEntity<List<String>> getFavourites(@RequestParam(defaultValue = "0") int pageNum, HttpServletRequest req) {
+    public ResponseEntity<List<String>> getFavourites(@RequestParam(defaultValue = "0") int pageNum,
+            HttpServletRequest req) {
         Pageable pageable = PageRequest.of(pageNum, 15);
-        List<String> canvases = canvasService.getFavouritesByToken(req.getHeader("Authorization").substring(7),pageable);
+        List<String> canvases = canvasService.getFavouritesByToken(req.getHeader("Authorization").substring(7),
+                pageable);
         return new ResponseEntity<List<String>>(canvases, HttpStatus.OK);
     }
 
@@ -95,6 +97,15 @@ public class CanvasController {
         return new ResponseEntity(
                 canvasService.toggleFavouriteCanvasById(id, req.getHeader("Authorization").substring(7)),
                 HttpStatus.OK);
+    }
+
+    @GetMapping("/favourite-test")
+    public ResponseEntity<List<String>> getFavouritesTest(@RequestParam(defaultValue = "0") int pageNum,
+            HttpServletRequest req) {
+        Pageable pageable = PageRequest.of(pageNum, 15);
+        List<String> canvases = canvasService.getFavouritesByUsername("usernam,",
+                pageable);
+        return new ResponseEntity<List<String>>(canvases, HttpStatus.OK);
     }
 
     // @PutMapping()
