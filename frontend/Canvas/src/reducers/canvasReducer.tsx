@@ -25,6 +25,11 @@ export default function canvasReducer(state: canvasState, action: canvasAction):
             state.color = action.color;
             return { ...state };
 
+        case "SET_DRAWINGS":
+            if (!action.drawings) return { ...state };
+            state.drawings = action.drawings;
+            return updateCanvas(state);
+
         case "undo":
             let pixToRemove = state.drawings.pop();
             if (state.drawings.length === 0) state.drawings.push([]);

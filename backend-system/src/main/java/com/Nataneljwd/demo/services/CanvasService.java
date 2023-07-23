@@ -67,7 +67,7 @@ public class CanvasService {
     }
 
     public String saveOrUpdateCanvas(Canvas canvas, String jwt) {
-        if (canvasRepository.findById(canvas.getId()).isPresent()) {
+        if (canvas.getId() != null && canvasRepository.findById(canvas.getId()).isPresent()) {
             return updateCanvasById(canvas, jwt).getId();
         }
         return saveCanvas(canvas).getId();

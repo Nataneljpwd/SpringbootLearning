@@ -55,7 +55,7 @@ export default function CanvasOptions() {
     function saveCanvas(state: state) {
         api.post("/canvas", {
             drawings: state.drawings,
-            ownerId: "Bearer " + localStorage.getItem("token"),
+            ownerId: localStorage.getItem("token"),
             //pass the token instead
         }).catch(err => console.log(err))
         // .catch(err => refresh().then(token => localStorage.setItem("token", token)))
