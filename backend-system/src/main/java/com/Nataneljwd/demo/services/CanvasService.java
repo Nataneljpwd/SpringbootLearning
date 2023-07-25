@@ -111,17 +111,53 @@ public class CanvasService {
     }
 
     public Canvas saveCanvas(Canvas canvas) {
-        String st = canvas.getId();
         String email = jwtService.extractUsername(canvas.getOwnerId());
         User user = userRepositry.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException("Owner does not exist"));
+        String id = getDuplicates(canvas, user);// returns the id of the canvas duplicate, if doesnt exist, returns null
+        if (!id.equals("")) {
+            // if true, then there are duplicates so we instead update canvas and return the
+            // updated canvas id
+            canvas.setId(id);
+            return updateCanvasById(canvas, canvas.getOwnerId());
+        }
         canvas.setOwnerId(user.getId());
-        user.getCanvases().add(canvas.getId());
         canvas.setFavourites(new ArrayList<String>());
         canvas.setRemixes(new ArrayList<String>());
-        canvasRepository.save(canvas);
+        canvas.setHash(Arrays.deepHashCode(canvas.getDrawings()));
+        canvas = canvasRepository.save(canvas);
+        user.getCanvases().add(canvas.getId());
         userRepositry.save(user);
         return canvas;
+    }
+
+    private String getDuplicates(Canvas canvas, User user) {
+        // we only check for the drawings or the pixels
+        int cHash = canvas.getHash();
+        if (cHash == 0) {
+            // we create the hash and update the db
+            canvas.setHash(Arrays.deepHashCode(canvas.getDrawings()));
+            canvas = canvasRepository.save(canvas);
+        }
+        List<String> canvases = user.getCanvases();
+        for (int i = 0; i < canvases.size(); i++) {
+            Optional<Canvas> c = canvasRepository.findById(canvases.get(i));
+            if (!c.isPresent()) {
+                // the canvas with taht id does not exist so we delete from user Array
+                user.getCanvases().remove(canvases.get(i));
+                userRepositry.save(user);
+            }
+            Canvas c1 = c.orElseThrow(() -> new NotFoundException("Canvas does not exist"));// will never throw because
+                                                                                            // we check above
+            if (c1.getHash() == 0) {
+                c1.setHash(Arrays.deepHashCode(c1.getDrawings()));
+                canvasRepository.save(c1);
+            }
+            if (cHash == c1.getHash()) {
+                return c1.getId();
+            }
+        }
+        return "";
     }
 
     public String deleteCanvasById(String id) {

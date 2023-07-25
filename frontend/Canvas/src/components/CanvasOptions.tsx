@@ -1,15 +1,15 @@
 import styles from "../styles/styles.module.css"
 import { faEraser, faFillDrip, faPaintbrush, faRedo, faSave, faUndo } from "@fortawesome/free-solid-svg-icons";
 import IconButton from "./IconButton";
-import { useContext, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { DispatchContext, GlobalStateContext, StateContext } from "../contexts/ReducerContext";
 import { GlobalState, state } from "../types";
 import { HexColorPicker } from "react-colorful";
-import axios from "axios";
 import { useApi } from "../api/api";
+import { useNavigate } from "react-router-dom";
 
 
-export default function CanvasOptions() {
+export default function CanvasOptions({ canvasId }) {
     //@ts-ignore
     const dispatch = useContext<({ }) => state>(DispatchContext);
     //@ts-ignore
@@ -19,6 +19,8 @@ export default function CanvasOptions() {
     const [collapsed, setCollapsed] = useState<boolean>(true);
     const [hover, setHover] = useState(false);
     const api = useApi();
+    const id = useRef(canvasId);
+    const nav = useNavigate();
 
     const changeColor = (color: string) => {
         dispatch({ type: "CHANGE_COLOR", color: color });
@@ -56,9 +58,15 @@ export default function CanvasOptions() {
         api.post("/canvas", {
             drawings: state.drawings,
             ownerId: localStorage.getItem("token"),
-            //pass the token instead
-        }).catch(err => console.log(err))
-        // .catch(err => refresh().then(token => localStorage.setItem("token", token)))
+            id: id.current,//if null we check in the backend
+        }).then(res => res.data)
+            .then(data => id.current = data)
+            .catch(err => {
+                if (err.response.status && err.response.status === 401) {
+                    //we need to redirect to the login page to authenticate
+                    nav("/login", { state: { message: "Ypu need to be logged in in order to save a canvas" } })
+                }
+            })//we need to check if unauthenticated error
     }
 
     return (

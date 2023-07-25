@@ -16,7 +16,7 @@ public class Drawing {
 
     @Getter
     @Setter
-    private List<Pixel> pixels;
+    private Pixel[] pixels;
 
     @NoArgsConstructor
     @AllArgsConstructor

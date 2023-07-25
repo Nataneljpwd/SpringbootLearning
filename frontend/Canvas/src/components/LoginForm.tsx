@@ -5,6 +5,7 @@ import { Box, TextField, Typography } from "@mui/material";
 import axios from 'axios';
 import { useEffect, useReducer, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from 'react-router-dom';
 import { object, string, TypeOf } from "zod";
 import api from '../api/api';
 
@@ -18,9 +19,10 @@ const loginScheme = object({
 
 type LoginInput = TypeOf<typeof loginScheme>;
 
-export default function LoginForm() {
+export default function LoginForm({ message }) {
 
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
     const { register,
         formState: { errors, isSubmitSuccessful },
@@ -30,8 +32,11 @@ export default function LoginForm() {
         resolver: zodResolver(loginScheme),
     })
     useEffect(() => {
+        //TODO: show message
+    }, [])
+    useEffect(() => {
         if (isSubmitSuccessful) {
-            reset();
+            navigate("/canvas");
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isSubmitSuccessful]);

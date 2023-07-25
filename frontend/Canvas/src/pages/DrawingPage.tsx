@@ -38,7 +38,7 @@ export default function DrawingPage() {
         <StateContext.Provider value={state}>
             <DispatchContext.Provider value={dispatch}>
                 <Canvas rows={globalState.canvasSize.rows} cols={globalState.canvasSize.cols} preview={false} />
-                <CanvasOptions />
+                <CanvasOptions id={id} />
             </DispatchContext.Provider>
         </StateContext.Provider>
     )
