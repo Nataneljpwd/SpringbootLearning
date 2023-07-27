@@ -50,11 +50,13 @@ export default function canvasReducer(state: canvasState, action: canvasAction):
             if (!state.mouseDown || !action.pos) return { ...state };
             let r = action.pos[0];
             let c = action.pos[1];
-            let currDrawings = state.drawings[state.drawings.length - 1];
-            for (let i = 0; i < currDrawings.length; i++) {
-                let pixel = currDrawings[i];
-                if (pixel.pos[0] == r && pixel.pos[1] == c) return { ...state };
-            }
+            // let currDrawings = state.drawings[state.drawings.length - 1];
+            // for (let i = 0; i < currDrawings.length; i++) {
+            //     let pixel = currDrawings[i];
+            //     if (pixel.pos[0] == r && pixel.pos[1] == c) return { ...state };
+            // }
+            if (state.pixels[r][c] == state.color) return state;
+
             state.pixels[r][c] = state.color;
             state.drawings[state.drawings.length - 1].push({ pos: [r, c], color: state.pixels[r][c] })
             return updateCanvas(state);
@@ -69,6 +71,7 @@ export default function canvasReducer(state: canvasState, action: canvasAction):
             let q: number[][] = [[startRow, startCol]];
             let dirs: number[][] = [[1, 0], [-1, 0], [0, 1], [0, -1]];
             state.pixels[startRow][startCol] = state.color;
+            state.drawings.push([]);
             state.drawings[state.drawings.length - 1].push({ pos: [startRow, startCol], color: state.color });
             while (q.length !== 0) {
                 let pix = q.shift();
@@ -78,6 +81,8 @@ export default function canvasReducer(state: canvasState, action: canvasAction):
                     let row = currRow + dirs[i][0];
                     let col = currCol + dirs[i][1];
                     if ((!set.has(row + "," + col) && row >= 0 && col >= 0 && row < state.pixels.length && col < state.pixels[0].length) && state.pixels[row][col] != state.color.toLowerCase()) {
+                        //TODO: maybe add a slider weather to fill until the current color or just until there is any color other than black
+                        //basically toggling between state.pixels[row][col] != state.color.toLowerCase() and state.pixels[row][col] != "#000000"
                         set.add(row + "," + col);
                         state.pixels[row][col] = state.color;
                         state.drawings[state.drawings.length - 1].push({ pos: [row, col], color: state.color });

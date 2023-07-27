@@ -32,7 +32,11 @@ public class DrawingDeserializer extends StdDeserializer<Drawing> {
                                 new int[] { el.get("pos").get(0).asInt(), el.get("pos").get(1).asInt() }));
             }
         }
-        return new Drawing((Pixel[]) pixels.toArray());
+        Pixel[] px = new Pixel[pixels.size()];
+        for (int i = 0; i < pixels.size(); i++) {
+            px[i] = pixels.get(i);
+        }
+        return new Drawing(px);
     }
 
 }

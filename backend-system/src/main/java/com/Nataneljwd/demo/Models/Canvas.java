@@ -6,6 +6,10 @@ import java.util.UUID;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.mongodb.lang.Nullable;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -36,13 +40,13 @@ public class Canvas {
      */
     private List<String> remixes;
 
-    private int drawingsHash;
+    private String drawingsHash;
 
-    public int getHash() {
+    public String getHash() {
         return drawingsHash;
     }
 
-    public void setHash(int drawingsHash) {
+    public void setHash(String drawingsHash) {
         this.drawingsHash = drawingsHash;
     }
 

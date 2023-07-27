@@ -5,28 +5,26 @@ import java.util.List;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
+@Data
 @JsonDeserialize(using = com.Nataneljwd.demo.deserializers.DrawingDeserializer.class)
 public class Drawing {
 
-    @Getter
-    @Setter
     private Pixel[] pixels;
 
     @NoArgsConstructor
     @AllArgsConstructor
+    @Data
     public static class Pixel {
 
-        @Getter
-        @Setter
         private String color = "";
-        @Getter
-        @Setter
+
         private int[] pos;
 
         public String toString() {

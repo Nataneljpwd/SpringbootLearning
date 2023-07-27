@@ -87,7 +87,8 @@ public class CanvasController {
 
     @PostMapping
     public ResponseEntity<String> saveCanvas(@RequestBody Canvas canvas, HttpServletRequest req) {
-        return new ResponseEntity(canvasService.saveOrUpdateCanvas(canvas, req.getHeader("Authorization")).substring(7),
+        return new ResponseEntity(
+                canvasService.saveOrUpdateCanvas(canvas, req.getHeader("Authorization").split(" ")[1].trim()),
                 HttpStatus.CREATED);
         // HttpStatus.CREATED);
     }
