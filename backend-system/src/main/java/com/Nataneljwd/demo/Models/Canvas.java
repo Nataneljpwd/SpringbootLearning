@@ -5,7 +5,9 @@ import java.util.UUID;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.redis.core.script.DigestUtils;
 
+import com.Nataneljwd.demo.Models.Drawing.Pixel;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mongodb.lang.Nullable;
@@ -64,6 +66,32 @@ public class Canvas {
 
         bldr.append("]");
         return bldr.toString();
+    }
+
+    public static String generateHash(Drawing[] drawings) {
+        StringBuilder bldr = new StringBuilder();
+
+        // we construct tha canvas which is of size 40*50 px
+        String[][] canvas = new String[40][50];
+        for (int i = 0; i < canvas.length; i++)
+            for (int j = 0; j < canvas[0].length; j++)
+                canvas[i][j] = "#000000";
+
+        for (int i = 0; i < drawings.length; i++) {
+            Pixel[] p = drawings[i].getPixels();
+            if (p == null || p.length == 0)
+                continue;
+            for (int j = 0; j > p.length; j++) {
+                int r = p[j].getPos()[0], c = p[j].getPos()[1];
+                canvas[r][c] = p[j].getColor();
+            }
+        }
+        // we constructed the canvas, now we convert to 1 single string
+        for (int i = 0; i < canvas.length; i++)
+            for (int j = 0; j < canvas[0].length; j++)
+                bldr.append(canvas[i][j]).append(" ");
+
+        return DigestUtils.sha1DigestAsHex(bldr.toString());
     }
 
 }

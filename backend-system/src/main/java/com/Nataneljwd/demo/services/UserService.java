@@ -1,5 +1,8 @@
 package com.Nataneljwd.demo.services;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 
 import com.Nataneljwd.demo.Exceptions.NotFoundException;
@@ -22,6 +25,10 @@ public class UserService {
     public UserDTO getUserByEmail(String email) {
         return new UserDTO(
                 userRepositry.findByEmail(email).orElseThrow(() -> new NotFoundException("User not found")));
+    }
+
+    public List<UserDTO> getAllUsers() {
+        return userRepositry.findAll().stream().map(user -> new UserDTO(user)).collect(Collectors.toList());
     }
 
 }

@@ -6,6 +6,7 @@ import com.Nataneljwd.demo.security.*;
 import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Optional;
 
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,7 +27,7 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     public AuthenticationResponse register(User user) {
-        user.setCanvases(new ArrayList<String>());
+        user.setCanvases(new HashSet<String>());
         user.setRole(Role.USER);
         user.setFavourites(new ArrayList<String>());
         Optional<User> check = userRepositry.findByEmail(user.getEmail());

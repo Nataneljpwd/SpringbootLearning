@@ -1,7 +1,7 @@
 package com.Nataneljwd.demo.security;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
@@ -14,7 +14,6 @@ import com.fasterxml.jackson.annotation.JsonAlias;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -46,7 +45,7 @@ public class User implements UserDetails {
 
     private Role role;
 
-    private List<String> canvases;// contains the list of canvas ids of the person
+    private HashSet<String> canvases;// contains the list of canvas ids of the person
 
     private List<String> favourites;
 

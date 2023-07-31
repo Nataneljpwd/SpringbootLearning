@@ -56,7 +56,7 @@ export default function CanvasOptions({ canvasId }) {
 
     function saveCanvas(state: state) {
         api.post("/canvas", {
-            drawings: state.drawings,
+            drawings: state.drawings.filter(el => el.length != 0),
             ownerId: localStorage.getItem("token"),
             id: id.current,//if null we check in the backend
         }).then(res => res.data)

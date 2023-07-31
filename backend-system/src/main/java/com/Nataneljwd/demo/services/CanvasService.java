@@ -2,6 +2,7 @@ package com.Nataneljwd.demo.services;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -22,6 +23,7 @@ import com.Nataneljwd.demo.Models.Canvas;
 import com.Nataneljwd.demo.repositry.CanvasRepositry;
 import com.Nataneljwd.demo.repositry.UserRepositry;
 import com.Nataneljwd.demo.security.User;
+import com.sun.jdi.request.InvalidRequestStateException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -44,7 +46,7 @@ public class CanvasService {
             User user = userRepositry.findByEmail(jwtService.extractUsername(jwt))
                     .orElseThrow(() -> new NotFoundException("Owner does not exist"));
             if (user.getCanvases() == null)
-                user.setCanvases(new ArrayList<String>());
+                user.setCanvases(new HashSet<String>());
             if (user.getCanvases().contains(id)) {
                 c.setOwnerId(user.getId());
                 canvasRepository.save(c);
@@ -57,12 +59,10 @@ public class CanvasService {
                 c.getRemixes().add(user.getId());
                 canvasRepository.save(c);
                 c.setId(null);
-                c.setOwnerId(user.getId());
                 saveCanvas(c);
             }
         } else {
             // canvas request is invalid
-            throw new BadCredentialsException("Invalid Request Data");
         }
         c.setDrawings(canvas.getDrawings());
         canvasRepository.save(c);
@@ -127,7 +127,7 @@ public class CanvasService {
         canvas.setOwnerId(user.getId());
         canvas.setFavourites(new ArrayList<String>());
         canvas.setRemixes(new ArrayList<String>());
-        canvas.setHash(DigestUtils.sha1DigestAsHex(canvas.getDrawings().toString()));
+        canvas.setHash(Canvas.generateHash(canvas.getDrawings()));
         canvas = canvasRepository.save(canvas);
         user.getCanvases().add(canvas.getId());
         userRepositry.save(user);
@@ -136,31 +136,37 @@ public class CanvasService {
 
     private String getDuplicates(Canvas canvas, User user) {
         // we only check for the drawings or the pixels
-        String cHash = canvas.getHash();
+        String cHash = canvas.getHash();//cHash is the hash of the canvas we are checking, basically the new canvas
         if (cHash == null || cHash.equals("")) {
             // we create the hash and update the db
-            canvas.setHash(DigestUtils.sha1DigestAsHex(canvas.getDrawings().toString()));
+            canvas.setHash(Canvas.generateHash(canvas.getDrawings()));
             canvas = canvasRepository.save(canvas);
             cHash = canvas.getHash();
         }
-        List<String> canvases = user.getCanvases();
+        HashSet<String> canvases = user.getCanvases();
         for (int i = 0; i < canvases.size(); i++) {
-            if (canvases.get(i) == null)
-                continue;
-            Optional<Canvas> c = canvasRepository.findById(canvases.get(i));
-            if (!c.isPresent()) {
-                // the canvas with taht id does not exist so we delete from user Array
-                user.getCanvases().remove(canvases.get(i));
-                userRepositry.save(user);
-            }
-            Canvas c1 = c.orElseThrow(() -> new NotFoundException("Canvas does not exist"));// will never throw because
-                                                                                            // we check above
-            if (c1.getHash() == null || c1.getHash().equals("")) {
-                c1.setHash(DigestUtils.sha1DigestAsHex(c1.getDrawings().toString()));
-                canvasRepository.save(c1);
-            }
-            if (cHash.equals(c1.getHash())) {
-                return c1.getId();
+            for(String id:canvases.stream().collect(Collectors.toList())) {
+                if(id == null){
+                    //we delete the entry and continue
+                    user.getCanvases().remove(id);
+                    userRepositry.save(user);
+                    continue;
+                }
+                Optional<Canvas> c = canvasRepository.findById(id);
+                if (!c.isPresent()) {
+                    // the canvas with taht id does not exist so we delete from user Array
+                    user.getCanvases().remove(id);
+                    userRepositry.save(user);
+                }
+                Canvas c1 = c.orElseThrow(() -> new NotFoundException("Canvas does not exist"));// will never throw because
+                                                                                                // we check above
+                if (c1.getHash() == null || c1.getHash().equals("")) {
+                    c1.setHash(Canvas.generateHash(c1.getDrawings()));
+                    canvasRepository.save(c1);
+                }
+                if (cHash.equals(c1.getHash())) {
+                    return c1.getId();
+                }
             }
         }
         return "";

@@ -1,5 +1,7 @@
 package com.Nataneljwd.demo.controllers;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,8 +17,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/v1/user")
 @RequiredArgsConstructor
+@RequestMapping("/api/v1/user")
 public class UserController {
 
     private final UserService userService;
@@ -33,6 +35,11 @@ public class UserController {
                 userService.getUserByEmail(
                         jwtService.extractUsername(request.getHeader("Authorization").toString().substring(7))),
                 HttpStatus.OK);
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<UserDTO>> getAllUsers() {
+        return new ResponseEntity<List<UserDTO>>(userService.getAllUsers(), HttpStatus.OK);
     }
 
 }

@@ -1,5 +1,6 @@
 package com.Nataneljwd.demo.security;
 
+import java.util.HashSet;
 import java.util.List;
 
 import lombok.Data;
@@ -10,7 +11,7 @@ public class UserDTO {
     private String username;
     private String id;
     private List<String> favourites;
-    private List<String> canvases;
+    private HashSet<String> canvases;
 
     public UserDTO(User user) {
         this.id = user.getId();
