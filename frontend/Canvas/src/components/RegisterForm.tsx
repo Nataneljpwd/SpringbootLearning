@@ -2,10 +2,11 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormControl } from "@mui/base";
 import { LoadingButton } from '@mui/lab';
-import { Box, TextField, Typography } from "@mui/material";
+import { Box, Button, TextField, Typography } from "@mui/material";
 import axios from 'axios';
 import { useEffect, useReducer, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from 'react-router-dom';
 import { object, string, TypeOf } from "zod";
 import api from '../api/api';
 
@@ -23,6 +24,7 @@ type RegisterInput = TypeOf<typeof registerScheme>;
 export default function RegisterForm() {
 
     const [loading, setLoading] = useState(false);
+    const nav = useNavigate();
 
     const { register,
         formState: { errors, isSubmitSuccessful },
@@ -56,6 +58,7 @@ export default function RegisterForm() {
                     <TextField required fullWidth sx={{ mb: 2 }} variant="outlined" type="password" color="secondary" label="Confirm Password" error={!!errors["passwordConfirm"]} helperText={errors["passwordConfirm"] ? errors["passwordConfirm"].message : ""} {...register("passwordConfirm")} ></TextField>
 
                     <LoadingButton variant="contained" type="submit" loading={loading} fullWidth sx={{ py: '0.5rem', mt: '1rem' }}>Register</LoadingButton>
+                    <Button fullWidth sx={{ py: '0.5rem', mt: '1rem' }} color="primary" onClick={() => nav("/login")} variant="contained">Login</Button>
                 </Box >
             </Box>
         </>

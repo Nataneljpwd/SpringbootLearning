@@ -6,7 +6,7 @@ function Login() {
     const location = useLocation();
     return (
         <div className={styles.login}>
-            <LoginForm message={location.state.message} />
+            <LoginForm message={location?.state?.message} />
         </div>
     )
 }

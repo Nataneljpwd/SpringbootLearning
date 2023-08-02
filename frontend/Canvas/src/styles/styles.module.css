@@ -85,3 +85,39 @@
     display:grid;
     place-items: center;
 }
+
+.popup {
+    position:absolute;
+    animation-name: pop;
+    animation-duration: 3000ms;
+    width: 20vmin;
+    aspect-ratio: 16/10;
+    border:2px solid #FFFFFF;
+    box-sizing:border-box;
+    background-color:#000000;
+    left:50%;
+    top:100%;
+    transform:translateX(-50%);
+}
+@keyframes pop {
+    0% {
+        opacity: 0;
+    }
+    15% {
+        top:5vmin;
+        opacity:1;
+    }
+    20% {
+        top:7vmin;
+    }
+    80% {
+        top:7vmin;
+    }
+    85% {
+        top:9vmin;
+    }
+    100% {
+        top:-100vmin;
+    }
+}
+

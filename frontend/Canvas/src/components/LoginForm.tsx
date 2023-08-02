@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from 'react-router-dom';
 import { object, string, TypeOf } from "zod";
 import api from '../api/api';
+import Popup from './Popup';
 
 const loginScheme = object({
     password: string()
@@ -22,6 +23,7 @@ type LoginInput = TypeOf<typeof loginScheme>;
 export default function LoginForm({ message }) {
 
     const [loading, setLoading] = useState(false);
+    const [showPopup, setShowPopup] = useState(true);
     const navigate = useNavigate();
 
     const { register,
@@ -33,6 +35,9 @@ export default function LoginForm({ message }) {
     })
     useEffect(() => {
         //TODO: show message
+        if (message != null && message !== "") {
+            setShowPopup(true);
+        }
     }, [])
     useEffect(() => {
         if (isSubmitSuccessful) {
@@ -58,6 +63,7 @@ export default function LoginForm({ message }) {
                     <LoadingButton variant="contained" type="submit" loading={loading} fullWidth sx={{ py: '0.5rem', mt: '1rem' }}>Login</LoadingButton>
                 </Box >
             </Box>
+            {showPopup && <Popup message={message} duration={3000} />}
         </>
     )
 
