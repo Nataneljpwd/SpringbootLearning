@@ -31,6 +31,9 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<UserDTO> getUserByAuthToken(HttpServletRequest request) {
+        if (request.getHeader("Authorization") == null || request.getHeader("Authorization").isEmpty()) {
+            return new ResponseEntity<UserDTO>(HttpStatus.UNAUTHORIZED);
+        }
         return new ResponseEntity<UserDTO>(
                 userService.getUserByEmail(
                         jwtService.extractUsername(request.getHeader("Authorization").toString().substring(7))),

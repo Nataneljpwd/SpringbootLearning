@@ -5,6 +5,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.InvalidKeyException;
 import io.jsonwebtoken.security.Keys;
 
 import org.springframework.security.core.userdetails.UserDetails;
@@ -71,6 +72,8 @@ public class JwtService {
                     .getBody();
         } catch (ExpiredJwtException e) {
             return e.getClaims();
+        } catch (InvalidKeyException e) {
+            return null;
         }
     }
 

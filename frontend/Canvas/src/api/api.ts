@@ -7,6 +7,11 @@ api.interceptors.response.use(
     async error => {
         if ((error.response.status === 401 || error.response.status === 403) && !error.config?.sent) {
             // we try to refresh the token
+            if (!localStorage.getItem("token")) {
+                error.config.status = 401;//to indicata unauthenticated
+                error.config.message = "redirect /login";
+                return error;
+            }
             let token = await axios.post("http://localhost:8080/api/v1/auth/refresh", { oldToken: localStorage.getItem("token") })
                 .then(res => res.data.token);
             if (token) {

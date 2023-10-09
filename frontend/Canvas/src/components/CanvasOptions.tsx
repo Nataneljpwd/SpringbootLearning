@@ -64,14 +64,14 @@ export default function CanvasOptions({ canvasId }) {
             .catch(err => {
                 if (err.response.status && err.response.status === 401) {
                     //we need to redirect to the login page to authenticate
-                    nav("/login", { state: { message: "Ypu need to be logged in in order to save a canvas" } })
+                    nav("/login", { state: { message: "You need to be logged in in order to save a canvas" } })
                 }
             })//we need to check if unauthenticated error
     }
 
     return (
         <div style={{
-            background: "linear-gradient(50deg, " + state.color + ", " + getInverseColor(state.color) + ")",
+            background: "linear-gradient(30deg, " + state.color + ", " + getInverseColor(state.color) + ")",
             boxShadow: "0px 0px 10px " + getInverseColor(state.color),
             left: collapsed ? (hover ? "-13vmax" : "-14.8vmax") : "0"
         }}

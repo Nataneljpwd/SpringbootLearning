@@ -38,9 +38,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
+        if(request.getMethod().equals("GET")){
+            filterChain.doFilter(request, response);
+            return;
+        }//TODO: implement rate limiting
 
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);
+            ((HttpServletResponse) response).sendError(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
         jwt = authorizationHeader.substring(7);

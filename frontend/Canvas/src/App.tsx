@@ -25,7 +25,12 @@ function App() {
     useEffect(() => {
         api.get("/user")
             .then(data => data.data)
-            .then(data => dispatch({ type: "SET_USER_INFO", username: data.userName, userId: data.id }));
+            .then(data => dispatch({ type: "SET_USER_INFO", username: data.userName, userId: data.id }))
+            .catch(error => {
+                // if (error.message.startsWith("redirect")) {
+                //     navigate(error.message.split(" ")[1], { state: { message: "t" } });
+                // }
+            });
     }, [])
     return (
         <div className="App">

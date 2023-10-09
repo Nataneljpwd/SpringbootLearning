@@ -1,0 +1,32 @@
+services:
+  backend:
+    build: .
+    ports:
+      - 8080:8080
+    depends_on:
+      - mongodb
+      - redis
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/spring
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
+      REDIS_HOST: localhost
+      REDIS_PORT: 6379
+      REDIS_TIMEOUT: 2000
+      REDIS_MAXIMUM_ACTIVE_CONNECTIONS: 100
+      REDIS_TIME_TO_LIVE: 360000
+    restart: always
+  mongodb:
+    image: mongo
+    hostname: mongodb
+    ports:
+      - 27017:27017
+    restart: always
+  redis:
+    image: redis
+    hostname: redis
+    ports:
+      - 6379:6379
+    restart: always
+
